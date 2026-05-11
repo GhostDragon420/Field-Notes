@@ -1,0 +1,69 @@
+# Changelog — Field Fixes of a Migrated OS
+
+All notable changes to this project will be documented in this file.
+
+---
+
+## [v1.1.0] — 2026-05-10
+
+### Added
+- Section 12: Common Registry Paths (renumbered from original section 12)
+- Section 13: Linux Networking — Manual IP / NIC Recovery
+  - NIC status checks, temporary and permanent IP config
+  - Proxmox/Debian and Ubuntu/Netplan examples
+  - DNS and connectivity diagnostics
+- Section 14: Event Log Troubleshooting
+  - Root cause analysis methodology (trace event before the error)
+  - Kernel-PnP event reference table (Events 400, 401, 410, 411, 420, 430)
+  - Common Problem Codes table (Code 1, 10, 19, 22, 28, 31, 43)
+  - NTSTATUS code reference (0xc0000034, 0xc0000010, etc.)
+  - PowerShell event log query commands
+  - Code 19 UpperFilters/LowerFilters fix with Class GUIDs
+  - OS migration cleanup commands (scan all filters, find ghost devices)
+- Site-wide hamburger menu for SFE LLC subdomain navigation
+- Favicon and Google Analytics (gtag) integration
+- Fixed background CSS (background-attachment: fixed)
+- scroll-margin-top on sections for accurate anchor navigation
+- SFE LLC branded footer
+
+### Changed
+- Renamed from "Windows Admin Cheatsheet" to "Field Fixes of a Migrated OS, So You Don't Have To!"
+- Header updated to "Field Notes — Jon Merriman / SFE LLC"
+- Sections renumbered 01–14
+- Fixed nav active highlight CSS (`.active` class selector)
+
+### Fixed
+- Nav sidebar scroll tracking (was using `:active` pseudo-class instead of `.active` class)
+- Anchor links landing behind sticky header (added scroll-margin-top: 100px)
+
+---
+
+## [v1.0.0] — 2026-05-06
+
+### Initial Release
+- Section 01: System Info & Diagnostics (PowerShell + CMD)
+- Section 02: Registry Commands (read, write, create, delete, search)
+- Section 03: Driver Management (list, install, remove, PnP, signing)
+- Section 04: Boot Configuration / BCDedit
+- Section 05: System File & Image Repair (SFC + DISM)
+- Section 06: Windows Update Control (service management, pause, driver exclusion)
+- Section 07: Process & Service Management
+- Section 08: Network Commands (PowerShell + CMD)
+- Section 09: Disk & Storage
+- Section 10: Security & Permissions (execution policy, Defender, file ownership)
+- Section 11: Useful One-Liners
+- Section 12: Common Registry Paths reference table
+- Collapsible sections with toggle
+- Copy-to-clipboard on all code blocks
+- Search/filter functionality
+- Sidebar navigation with scroll tracking
+- Responsive layout (sidebar hides on mobile)
+- Dark theme with syntax highlighting
+
+---
+
+© 2025-2026 Jon Merriman / Sync-First Essentials LLC — All Rights Reserved
+Remember Chaos is Peace, Peace is Chaos!
+Website: https://syncfirstessentials.com
+Support: jon@syncfirstessentials.com
+Created by: Jon Merriman / Juggalospsyco420 / GhostDragon420
