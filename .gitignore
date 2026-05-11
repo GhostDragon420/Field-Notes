@@ -1,0 +1,32 @@
+# OS generated files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# WebStorm SFTP config
+.ftpconfig
+.remote-sync.json
+.deployment
+
+# Logs
+*.log
+
+# Temp files
+*.tmp
+*.bak
+*.backup
+
+# Node (if ever needed)
+node_modules/
+package-lock.json
+
+# Environment
+.env
+.env.local
