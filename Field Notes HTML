@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://field.syncfirstessentials.com/sfe-favicon-high-532x532.png">
+
+    <title>FIELD Notes</title>
+
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600;700&display=swap');
+
+        :root {
+            --bg: #0d0f14;
+            --bg2: #13161e;
+            --bg3: #1a1e28;
+            --border: #2a2f3d;
+            --accent: #00e5ff;
+            --accent2: #7b61ff;
+            --accent3: #ff6b35;
+            --text: #c8d0e0;
+            --text-dim: #6b7590;
+            --green: #39ff14;
+            --yellow: #ffd600;
+            --red: #ff4444;
+            --code-bg: #0a0c10;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Barlow', sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+            background-attachment: fixed;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #0d0f14 0%, #1a1e28 50%, #0d0f14 100%);
+            border-bottom: 1px solid var(--accent);
+            padding: 28px 40px 20px 60px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 30px rgba(0,229,255,0.08);
+        }
+
+        header h1 {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.5rem;
+            color: var(--accent);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        header p {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            margin-top: 2px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        /* SEARCH */
+        .search-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #search {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.85rem;
+            padding: 6px 14px;
+            width: 240px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        #search:focus { border-color: var(--accent); }
+        #search::placeholder { color: var(--text-dim); }
+
+        .search-count {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            min-width: 60px;
+        }
+
+        /* LAYOUT */
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* SIDEBAR NAV */
+        nav {
+            width: 220px;
+            min-width: 220px;
+            padding: 24px 0;
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            border-right: 1px solid var(--border);
+        }
+
+        nav a {
+            display: block;
+            padding: 7px 24px;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-family: 'Share Tech Mono', monospace;
+            border-left: 2px solid transparent;
+            transition: all 0.15s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--accent);
+            border-left-color: var(--accent);
+            background: rgba(0,229,255,0.04);
+        }
+
+        nav .nav-label {
+            padding: 16px 24px 4px;
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-family: 'Barlow', sans-serif;
+            font-weight: 600;
+        }
+
+        /* HAMBURGER MENU — SITE-WIDE NAV */
+        .hamburger {
+            position: fixed;
+            top: 18px;
+            left: 16px;
+            z-index: 200;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--accent);
+            cursor: pointer;
+            padding: 6px 10px;
+            font-size: 1.3rem;
+            line-height: 1;
+            transition: all 0.15s;
+        }
+
+        .hamburger:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(0,229,255,0.2);
+        }
+
+        .site-nav-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 150;
+        }
+
+        .site-nav-overlay.open { display: block; }
+
+        .site-nav {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background: var(--bg2);
+            border-right: 1px solid var(--accent);
+            z-index: 201;
+            padding: 70px 0 20px;
+            overflow-y: auto;
+            transition: left 0.25s ease;
+        }
+
+        .site-nav.open { left: 0; }
+
+        .site-nav .nav-label {
+            padding: 16px 24px 4px;
+            font-size: 0.65rem;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-family: 'Barlow', sans-serif;
+            font-weight: 600;
+        }
+
+        .site-nav a {
+            display: block;
+            padding: 10px 24px;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-family: 'Share Tech Mono', monospace;
+            border-left: 2px solid transparent;
+            transition: all 0.15s;
+        }
+
+        .site-nav a:hover {
+            color: var(--accent);
+            border-left-color: var(--accent);
+            background: rgba(0,229,255,0.04);
+        }
+
+        .site-nav a.current {
+            color: var(--accent);
+            border-left-color: var(--accent);
+        }
+
+
+        /* MAIN CONTENT */
+        main {
+            flex: 1;
+            padding: 32px 40px;
+            min-width: 0;
+        }
+
+        /* SECTIONS */
+        .section {
+            scroll-margin-top: 100px;
+            margin-bottom: 48px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .section:hover { border-color: rgba(0,229,255,0.25); }
+
+        .section-header {
+            background: var(--bg3);
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .section-header h2 {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.95rem;
+            color: var(--accent);
+            letter-spacing: 1px;
+            flex: 1;
+        }
+
+        .section-icon {
+            font-size: 1.1rem;
+            width: 28px;
+            text-align: center;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-family: 'Share Tech Mono', monospace;
+            padding: 2px 8px;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            transition: all 0.15s;
+        }
+
+        .toggle-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+        .section-body { padding: 20px; }
+
+        /* COMMAND BLOCKS */
+        .cmd-block {
+            margin-bottom: 20px;
+        }
+
+        .cmd-block:last-child { margin-bottom: 0; }
+
+        .cmd-label {
+            font-size: 0.72rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cmd-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .badge {
+            font-size: 0.65rem;
+            padding: 1px 7px;
+            border-radius: 3px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .badge-ps { background: rgba(123,97,255,0.2); color: var(--accent2); border: 1px solid rgba(123,97,255,0.3); }
+        .badge-cmd { background: rgba(255,107,53,0.2); color: var(--accent3); border: 1px solid rgba(255,107,53,0.3); }
+        .badge-reg { background: rgba(0,229,255,0.1); color: var(--accent); border: 1px solid rgba(0,229,255,0.2); }
+        .badge-warn { background: rgba(255,214,0,0.1); color: var(--yellow); border: 1px solid rgba(255,214,0,0.2); }
+
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 14px 16px;
+            overflow-x: auto;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.82rem;
+            line-height: 1.7;
+            position: relative;
+        }
+
+        pre:hover .copy-btn { opacity: 1; }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--bg3);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.15s;
+        }
+
+        .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+        .copy-btn.copied { color: var(--green); border-color: var(--green); opacity: 1; }
+
+        .comment { color: #4a5568; }
+        .cmd-text { color: #a8d8a8; }
+        .flag { color: #87ceeb; }
+        .path { color: #ffd700; }
+        .string { color: #ffa07a; }
+
+        /* TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.83rem;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        th {
+            background: var(--bg3);
+            color: var(--accent);
+            padding: 8px 14px;
+            text-align: left;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 7px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+            vertical-align: top;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+
+        td:first-child { color: var(--accent2); white-space: nowrap; }
+
+        /* WARN BOX */
+        .warn-box {
+            background: rgba(255,214,0,0.05);
+            border: 1px solid rgba(255,214,0,0.2);
+            border-radius: 4px;
+            padding: 10px 14px;
+            font-size: 0.82rem;
+            color: var(--yellow);
+            margin-bottom: 14px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .warn-box::before { content: '⚠ '; }
+
+        /* HIGHLIGHT for search */
+        mark {
+            background: rgba(0,229,255,0.25);
+            color: var(--accent);
+            border-radius: 2px;
+            padding: 0 1px;
+        }
+
+        .hidden { display: none !important; }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 16px 40px;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            font-family: 'Share Tech Mono', monospace;
+            text-align: center;
+        }
+
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent2); }
+
+        @media (max-width: 800px) {
+            nav { display: none; }
+            main { padding: 20px; }
+            header { padding: 16px 20px; }
+            .header-row { flex-direction: column; align-items: flex-start; }
+            #search { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<!-- SITE-WIDE NAV -->
+<button class="hamburger" onclick="toggleSiteNav()">☰</button>
+<div class="site-nav-overlay" id="siteNavOverlay" onclick="toggleSiteNav()"></div>
+<nav class="site-nav" id="siteNav">
+    <div class="nav-label">SFE LLC</div>
+    <a href="https://homepage.syncfirstessentials.com">Home</a>
+    <a href="https://field.syncfirstessentials.com" class="current">Field Notes</a>
+    <a href="https://contributorguideandsparkstories.syncfirstessentials.com">Stories</a>
+    <a href="https://about.syncfirstessentials.com">About</a>
+    <a href="https://contact.syncfirstessentials.com">Contact</a>
+    <a href="https://license.syncfirstessentials.com">License</a>
+    <!-- <li><a href="https://donations.syncfirstessentials.com">Donations</a></li> -->
+</nav>
+<header>
+    <div class="header-row">
+        <div>
+            <h1>// FIELD FIXES OF A MIGRATED OS, So You Don't Have To!</h1>
+            <p>PowerShell · CMD · Bcdedit · DISM · SFC · Registry · Drivers &nbsp;|&nbsp;Field Notes — Jon Merriman / SFE LLC &nbsp;|&nbsp; 2026-05-10</p>
+        </div>
+        <div class="search-wrap">
+            <input type="text" id="search" placeholder="Search commands..." autocomplete="off">
+            <span class="search-count" id="search-count"></span>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <nav id="sidenav">
+        <div class="nav-label">Sections</div>
+        <a href="#sysinfo">01 · System Info</a>
+        <a href="#registry">02 · Registry</a>
+        <a href="#drivers">03 · Drivers</a>
+        <a href="#bcdedit">04 · Bcdedit</a>
+        <a href="#repair">05 · SFC / DISM</a>
+        <a href="#winupdate">06 · Windows Update</a>
+        <a href="#processes">07 · Processes</a>
+        <a href="#network">08 · Network</a>
+        <a href="#disk">09 · Disk</a>
+        <a href="#security">10 · Security</a>
+        <a href="#oneliners">11 · One-Liners</a>
+        <a href="#regpaths">12 · Registry Paths</a>
+        <a href="#linuxnet">13 · Linux Networking</a>
+        <a href="#eventlog">14 · Event Log</a>
+
+    </nav>
+
+    <main>
+
+        <!-- 01 SYSTEM INFO -->
+        <div class="section" id="sysinfo">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-icon">💻</span>
+                <h2>01 · SYSTEM INFO & DIAGNOSTICS</h2>
+                <button class="toggle-btn">▼</button>
+            </div>
+            <div class="section-body">
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-ps">PowerShell</span></div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Full Windows version info</span>
+<span class="cmd-text">Get-ItemProperty</span> <span class="path">"HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion"</span> | Select-Object ProductName, CurrentBuild, DisplayVersion, ReleaseId
+
+<span class="comment"># Check Windows edition — opens GUI popup</span>
+winver
+
+<span class="comment"># Full system info dump</span>
+<span class="cmd-text">Get-ComputerInfo</span>
+
+<span class="comment"># Quick OS version</span>
+[System.Environment]::OSVersion
+
+<span class="comment"># Check if running as Administrator (returns True/False)</span>
+([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+
+<span class="comment"># Uptime</span>
+(Get-Date) - (gcim Win32_OperatingSystem).LastBootUpTime
+
+<span class="comment"># Hardware info</span>
+<span class="cmd-text">Get-CimInstance</span> Win32_ComputerSystem
+<span class="cmd-text">Get-CimInstance</span> Win32_Processor
+<span class="cmd-text">Get-CimInstance</span> Win32_PhysicalMemory</pre>
+                </div>
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-cmd">CMD</span></div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment">:: Full system info</span>
+systeminfo
+
+<span class="comment">:: Windows version string</span>
+ver
+
+<span class="comment">:: All environment variables</span>
+set</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- 02 REGISTRY -->
+        <div class="section" id="registry">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-icon">🗂️</span>
+                <h2>02 · REGISTRY COMMANDS</h2>
+                <button class="toggle-btn">▼</button>
+            </div>
+            <div class="section-body">
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-ps">PowerShell</span></div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Read a registry value</span>
+<span class="cmd-text">Get-ItemProperty</span> <span class="flag">-Path</span> <span class="path">"HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion"</span> <span class="flag">-Name</span> <span class="string">"ProductName"</span>
+
+<span class="comment"># Change a registry value — example: fix ProductName to Windows 11</span>
+<span class="cmd-text">Set-ItemProperty</span> <span class="flag">-Path</span> <span class="path">"HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion"</span> <span class="flag">-Name</span> <span class="string">"ProductName"</span> <span class="flag">-Value</span> <span class="string">"Windows 11 Home"</span>
+
+<span class="comment"># Create a new registry key</span>
+<span class="cmd-text">New-Item</span> <span class="flag">-Path</span> <span class="path">"HKLM:\SOFTWARE\MyKey"</span>
+
+<span class="comment"># Create a new registry value</span>
+<span class="cmd-text">New-ItemProperty</span> <span class="flag">-Path</span> <span class="path">"HKLM:\SOFTWARE\MyKey"</span> <span class="flag">-Name</span> <span class="string">"MyValue"</span> <span class="flag">-Value</span> <span class="string">"Data"</span> <span class="flag">-PropertyType</span> String
+
+<span class="comment"># Delete a registry value</span>
+<span class="cmd-text">Remove-ItemProperty</span> <span class="flag">-Path</span> <span class="path">"HKLM:\SOFTWARE\MyKey"</span> <span class="flag">-Name</span> <span class="string">"MyValue"</span>
+
+<span class="comment"># Delete a registry key entirely</span>
+<span class="cmd-text">Remove-Item</span> <span class="flag">-Path</span> <span class="path">"HKLM:\SOFTWARE\MyKey"</span> <span class="flag">-Recurse</span>
+
+<span class="comment"># List all values in a key</span>
+<span class="cmd-text">Get-Item</span> <span class="flag">-Path</span> <span class="path">"HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion"</span>
+
+<span class="comment"># Search registry for a value name</span>
+<span class="cmd-text">Get-ChildItem</span> <span class="flag">-Path</span> <span class="path">"HKLM:\SOFTWARE"</span> <span class="flag">-Recurse</span> | Where-Object { $_.Name <span class="flag">-like</span> <span class="string">"*SearchTerm*"</span> }</pre>
+                </div>
+                <div class="cmd-block">
+                    <div class="cmd-label">Hive Shortcuts</div>
+                    <table>
+                        <tr><th>Shorthand</th><th>Full Path</th></tr>
+                        <tr><td>HKLM</td><td>HKEY_LOCAL_MACHINE</td></tr>
+                        <tr><td>HKCU</td><td>HKEY_CURRENT_USER</td></tr>
+                        <tr><td>HKCR</td><td>HKEY_CLASSES_ROOT</td></tr>
+                        <tr><td>HKU</td><td>HKEY_USERS</td></tr>
+                        <tr><td>HKCC</td><td>HKEY_CURRENT_CONFIG</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 03 DRIVERS -->
+        <div class="section" id="drivers">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-icon">🔧</span>
+                <h2>03 · DRIVER MANAGEMENT</h2>
+                <button class="toggle-btn">▼</button>
+            </div>
+            <div class="section-body">
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-ps">PowerShell</span></div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># List all installed drivers</span>
+<span class="cmd-text">Get-WindowsDriver</span> <span class="flag">-Online -All</span>
+
+<span class="comment"># List 3rd party drivers only</span>
+<span class="cmd-text">Get-WindowsDriver</span> <span class="flag">-Online -All</span> | Where-Object { $_.OriginalFileName <span class="flag">-notlike</span> <span class="string">"*system32*"</span> }
+
+<span class="comment"># Find driver for a specific device</span>
+<span class="cmd-text">Get-PnpDevice</span> | Where-Object { $_.FriendlyName <span class="flag">-like</span> <span class="string">"*YourDevice*"</span> }
+
+<span class="comment"># List all PnP devices</span>
+<span class="cmd-text">Get-PnpDevice</span>
+
+<span class="comment"># List problem/errored devices</span>
+<span class="cmd-text">Get-PnpDevice</span> | Where-Object { $_.Status <span class="flag">-eq</span> <span class="string">"Error"</span> }
+
+<span class="comment"># Disable a device (get InstanceId from Get-PnpDevice)</span>
+<span class="cmd-text">Disable-PnpDevice</span> <span class="flag">-InstanceId</span> <span class="string">"PCI\VEN_XXXX..."</span>
+
+<span class="comment"># Enable a device</span>
+<span class="cmd-text">Enable-PnpDevice</span> <span class="flag">-InstanceId</span> <span class="string">"PCI\VEN_XXXX..."</span>
+
+<span class="comment"># Export all driver info to CSV</span>
+<span class="cmd-text">Get-WindowsDriver</span> <span class="flag">-Online -All</span> | Export-Csv <span class="path">"C:\drivers-list.csv"</span> <span class="flag">-NoTypeInformation</span>
+
+<span class="comment"># Install a driver from .inf file</span>
+pnputil <span class="flag">/add-driver</span> <span class="path">"C:\path\to\driver.inf"</span> <span class="flag">/install</span>
+
+<span class="comment"># Remove a driver (get oem##.inf from pnputil /enum-drivers)</span>
+pnputil <span class="flag">/delete-driver</span> oem##.inf <span class="flag">/uninstall /force</span></pre>
+                </div>
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-cmd">CMD</span></div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment">:: List all drivers</span>
+driverquery
+
+<span class="comment">:: List drivers with verbose details</span>
+driverquery /v
+
+<span class="comment">:: Export driver list to CSV</span>
+driverquery /fo csv > C:\drivers.csv
+
+<span class="comment">:: List all OEM (3rd party) drivers</span>
+pnputil /enum-drivers
+
+<span class="comment">:: Add and install a driver</span>
+pnputil /add-driver driver.inf /install</pre>
+                </div>
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-warn">Driver Signing</span></div>
+                    <div class="warn-box">These require Secure Boot to be OFF in UEFI. Check BitLocker first: manage-bde -status</div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Check Secure Boot state</span>
+<span class="cmd-text">Confirm-SecureBootUEFI</span>
+
+<span class="comment"># Check BitLocker before touching Secure Boot</span>
+manage-bde <span class="flag">-status</span>
+
+<span class="comment"># Enable test signing (allows unsigned/self-signed drivers)</span>
+bcdedit <span class="flag">/set</span> testsigning on
+
+<span class="comment"># Disable test signing</span>
+bcdedit <span class="flag">/set</span> testsigning off
+
+<span class="comment"># Check current test signing state</span>
+bcdedit /enum | findstr testsigning</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- 04 BCDEDIT -->
+        <div class="section" id="bcdedit">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-icon">⚙️</span>
+                <h2>04 · BOOT CONFIGURATION (Bcdedit)</h2>
+                <button class="toggle-btn">▼</button>
+            </div>
+            <div class="section-body">
+                <div class="warn-box">Requires Admin. Secure Boot must be OFF to modify most of these.</div>
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-cmd">CMD / PowerShell</span></div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment">:: View full boot config</span>
+bcdedit /enum all
+
+<span class="comment">:: View current boot entry</span>
+bcdedit
+
+<span class="comment">:: Enable test signing — allows unsigned drivers</span>
+bcdedit /set testsigning on
+
+<span class="comment">:: Disable test signing</span>
+bcdedit /set testsigning off
+
+<span class="comment">:: Enable debug mode</span>
+bcdedit /set debug on
+
+<span class="comment">:: Disable driver integrity checks — use carefully</span>
+bcdedit /set nointegritychecks on
+
+<span class="comment">:: Re-enable driver integrity checks</span>
+bcdedit /set nointegritychecks off
+
+<span class="comment">:: Set boot menu timeout in seconds</span>
+bcdedit /timeout 10
+
+<span class="comment">:: Set default boot entry</span>
+bcdedit /default {identifier}
+
+<span class="comment">:: Add a safe mode boot entry</span>
+bcdedit /copy {current} /d "Safe Mode Entry"
+bcdedit /set {newguid} safeboot minimal
+
+<span class="comment">:: Delete a boot entry</span>
+bcdedit /delete {identifier}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- 05 REPAIR -->
+        <div class="section" id="repair">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-icon">🛠️</span>
+                <h2>05 · SYSTEM FILE & IMAGE REPAIR (SFC / DISM)</h2>
+                <button class="toggle-btn">▼</button>
+            </div>
+            <div class="section-body">
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-cmd">SFC — System File Checker</span></div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment">:: Scan and repair system files</span>
+sfc /scannow
+
+<span class="comment">:: Scan only, no repair</span>
+sfc /verifyonly
+
+<span class="comment">:: Scan a specific file</span>
+sfc /scanfile=C:\Windows\System32\filename.dll
+
+<span class="comment">:: Run offline (useful when OS won't boot properly)</span>
+sfc /scannow /offbootdir=C:\ /offwindir=C:\Windows</pre>
+                </div>
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-cmd">DISM — Deployment Image Servicing</span></div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment">:: Quick health check</span>
+DISM /Online /Cleanup-Image /CheckHealth
+
+<span class="comment">:: Full health scan</span>
+DISM /Online /Cleanup-Image /ScanHealth
+
+<span class="comment">:: Repair image — downloads from Windows Update</span>
+DISM /Online /Cleanup-Image /RestoreHealth
+
+<span class="comment">:: Repair using local ISO/WIM source instead</span>
+DISM /Online /Cleanup-Image /RestoreHealth /Source:D:\Sources\install.wim
+
+<span class="comment">:: Get current OS edition</span>
+DISM /Online /Get-CurrentEdition
+
+<span class="comment">:: List editions you can upgrade to</span>
+DISM /Online /Get-TargetEditions
+
+<span class="comment">:: Remove a specific installed update</span>
+DISM /Online /Remove-Package /PackageName:Package_for_KB######~####
+
+<span class="comment">:: Clean up component store to free disk space</span>
+DISM /Online /Cleanup-Image /StartComponentCleanup</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- 06 WINDOWS UPDATE -->
+        <div class="section" id="winupdate">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-icon">🔄</span>
+                <h2>06 · WINDOWS UPDATE CONTROL</h2>
+                <button class="toggle-btn">▼</button>
+            </div>
+            <div class="section-body">
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-ps">PowerShell</span></div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Check Windows Update service status</span>
+<span class="cmd-text">Get-Service</span> wuauserv
+
+<span class="comment"># Stop Windows Update</span>
+<span class="cmd-text">Stop-Service</span> wuauserv <span class="flag">-Force</span>
+
+<span class="comment"># Start Windows Update</span>
+<span class="cmd-text">Start-Service</span> wuauserv
+
+<span class="comment"># Disable Windows Update service entirely</span>
+<span class="cmd-text">Set-Service</span> wuauserv <span class="flag">-StartupType</span> Disabled
+
+<span class="comment"># Re-enable Windows Update service</span>
+<span class="cmd-text">Set-Service</span> wuauserv <span class="flag">-StartupType</span> Manual
+
+<span class="comment"># List installed updates</span>
+<span class="cmd-text">Get-HotFix</span>
+
+<span class="comment"># List updates sorted by most recent first</span>
+<span class="cmd-text">Get-HotFix</span> | Sort-Object InstalledOn <span class="flag">-Descending</span>
+
+<span class="comment"># Remove a specific update</span>
+wusa /uninstall /kb:XXXXXXX /quiet /norestart
+
+<span class="comment"># Pause updates for 35 days via registry</span>
+$date = (Get-Date).AddDays(35).ToString(<span class="string">"yyyy-MM-dd"</span>) + <span class="string">"T00:00:00Z"</span>
+<span class="cmd-text">Set-ItemProperty</span> <span class="flag">-Path</span> <span class="path">"HKLM:\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings"</span> <span class="flag">-Name</span> <span class="string">"PauseUpdatesExpiryTime"</span> <span class="flag">-Value</span> $date
+
+<span class="comment"># Stop Windows Update from replacing your drivers</span>
+<span class="cmd-text">Set-ItemProperty</span> <span class="flag">-Path</span> <span class="path">"HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"</span> <span class="flag">-Name</span> <span class="string">"ExcludeWUDriversInQualityUpdate"</span> <span class="flag">-Value</span> 1 <span class="flag">-Type</span> DWord</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- 07 PROCESSES -->
+        <div class="section" id="processes">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-icon">⚡</span>
+                <h2>07 · PROCESS & SERVICE MANAGEMENT</h2>
+                <button class="toggle-btn">▼</button>
+            </div>
+            <div class="section-body">
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-ps">PowerShell</span></div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># List all running processes</span>
+<span class="cmd-text">Get-Process</span>
+
+<span class="comment"># Find a specific process</span>
+<span class="cmd-text">Get-Process</span> <span class="flag">-Name</span> <span class="string">"chrome"</span>
+
+<span class="comment"># Kill a process by name</span>
+<span class="cmd-text">Stop-Process</span> <span class="flag">-Name</span> <span class="string">"chrome"</span> <span class="flag">-Force</span>
+
+<span class="comment"># Kill a process by PID</span>
+<span class="cmd-text">Stop-Process</span> <span class="flag">-Id</span> 1234 <span class="flag">-Force</span>
+
+<span class="comment"># List all services</span>
+<span class="cmd-text">Get-Service</span>
+
+<span class="comment"># Start / Stop / Restart a service</span>
+<span class="cmd-text">Start-Service</span> <span class="flag">-Name</span> <span class="string">"ServiceName"</span>
+<span class="cmd-text">Stop-Service</span> <span class="flag">-Name</span> <span class="string">"ServiceName"</span> <span class="flag">-Force</span>
+<span class="cmd-text">Restart-Service</span> <span class="flag">-Name</span> <span class="string">"ServiceName"</span>
+
+<span class="comment"># Change service startup type</span>
+<span class="cmd-text">Set-Service</span> <span class="flag">-Name</span> <span class="string">"ServiceName"</span> <span class="flag">-StartupType</span> Disabled  <span class="comment"># or Manual, Automatic</span>
+
+<span class="comment"># List auto-start services</span>
+<span class="cmd-text">Get-Service</span> | Where-Object { $_.StartType <span class="flag">-eq</span> <span class="string">"Automatic"</span> }</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- 08 NETWORK -->
+        <div class="section" id="network">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-icon">🌐</span>
+                <h2>08 · NETWORK COMMANDS</h2>
+                <button class="toggle-btn">▼</button>
+            </div>
+            <div class="section-body">
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-ps">PowerShell</span></div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Get IP address info</span>
+<span class="cmd-text">Get-NetIPAddress</span>
+
+<span class="comment"># Get network adapters</span>
+<span class="cmd-text">Get-NetAdapter</span>
+
+<span class="comment"># Test connection — better than ping</span>
+<span class="cmd-text">Test-NetConnection</span> google.com
+<span class="cmd-text">Test-NetConnection</span> google.com <span class="flag">-Port</span> 443
+
+<span class="comment"># Flush DNS cache</span>
+<span class="cmd-text">Clear-DnsClientCache</span>
+
+<span class="comment"># View DNS cache</span>
+<span class="cmd-text">Get-DnsClientCache</span>
+
+<span class="comment"># Reset network stack — fixes lots of weird issues</span>
+netsh winsock reset
+netsh int ip reset</pre>
+                </div>
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-cmd">CMD</span></div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment">:: Ping</span>
+ping google.com
+
+<span class="comment">:: Trace route</span>
+tracert google.com
+
+<span class="comment">:: DNS lookup</span>
+nslookup google.com
+
+<span class="comment">:: Show all active connections with PID</span>
+netstat -ano
+
+<span class="comment">:: Show only listening ports</span>
+netstat -an | findstr LISTENING
+
+<span class="comment">:: Release and renew IP</span>
+ipconfig /release
+ipconfig /renew
+
+<span class="comment">:: Flush DNS</span>
+ipconfig /flushdns
+
+<span class="comment">:: Full network adapter info</span>
+ipconfig /all</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- 09 DISK -->
+        <div class="section" id="disk">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-icon">💾</span>
+                <h2>09 · DISK & STORAGE</h2>
+                <button class="toggle-btn">▼</button>
+            </div>
+            <div class="section-body">
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-ps">PowerShell</span></div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># List all disks</span>
+<span class="cmd-text">Get-Disk</span>
+
+<span class="comment"># List all partitions</span>
+<span class="cmd-text">Get-Partition</span>
+
+<span class="comment"># List all volumes</span>
+<span class="cmd-text">Get-Volume</span>
+
+<span class="comment"># Scan drive for errors</span>
+<span class="cmd-text">Repair-Volume</span> <span class="flag">-DriveLetter</span> C <span class="flag">-Scan</span>
+
+<span class="comment"># Repair drive errors</span>
+<span class="cmd-text">Repair-Volume</span> <span class="flag">-DriveLetter</span> C <span class="flag">-OfflineScanAndFix</span>
+
+<span class="comment"># Show disk space per drive</span>
+<span class="cmd-text">Get-PSDrive</span> <span class="flag">-PSProvider</span> FileSystem
+
+<span class="comment"># Find the 20 largest files on C: drive</span>
+<span class="cmd-text">Get-ChildItem</span> <span class="flag">-Path</span> C:\ <span class="flag">-Recurse -ErrorAction</span> SilentlyContinue | Sort-Object Length <span class="flag">-Descending</span> | Select-Object <span class="flag">-First</span> 20 FullName, Length</pre>
+                </div>
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-cmd">CMD</span></div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment">:: Schedule disk check on next reboot</span>
+chkdsk C: /f /r
+
+<span class="comment">:: Open disk cleanup</span>
+cleanmgr
+
+<span class="comment">:: Open diskpart (interactive partition tool)</span>
+diskpart
+
+<span class="comment">:: Inside diskpart — list volumes</span>
+list volume
+
+<span class="comment">:: Inside diskpart — list disks</span>
+list disk</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- 10 SECURITY -->
+        <div class="section" id="security">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-icon">🔒</span>
+                <h2>10 · SECURITY & PERMISSIONS</h2>
+                <button class="toggle-btn">▼</button>
+            </div>
+            <div class="section-body">
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-ps">PowerShell</span></div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Check execution policy</span>
+<span class="cmd-text">Get-ExecutionPolicy</span>
+
+<span class="comment"># Allow local scripts to run</span>
+<span class="cmd-text">Set-ExecutionPolicy</span> RemoteSigned <span class="flag">-Scope</span> CurrentUser
+
+<span class="comment"># Check Secure Boot status</span>
+<span class="cmd-text">Confirm-SecureBootUEFI</span>
+
+<span class="comment"># Check BitLocker status</span>
+manage-bde <span class="flag">-status</span>
+
+<span class="comment"># List local users</span>
+<span class="cmd-text">Get-LocalUser</span>
+
+<span class="comment"># List local groups</span>
+<span class="cmd-text">Get-LocalGroup</span>
+
+<span class="comment"># Add user to local Administrators group</span>
+<span class="cmd-text">Add-LocalGroupMember</span> <span class="flag">-Group</span> <span class="string">"Administrators"</span> <span class="flag">-Member</span> <span class="string">"Username"</span>
+
+<span class="comment"># Check current user privileges</span>
+whoami /priv
+
+<span class="comment"># Check group memberships</span>
+whoami /groups
+
+<span class="comment"># Take ownership of a file/folder</span>
+takeown /f <span class="path">"C:\path\to\file"</span> /r /d y
+
+<span class="comment"># Grant full permissions to Administrators</span>
+icacls <span class="path">"C:\path\to\file"</span> /grant Administrators:F</pre>
+                </div>
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-ps">Defender</span></div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Check Defender status</span>
+<span class="cmd-text">Get-MpComputerStatus</span>
+
+<span class="comment"># Quick scan</span>
+<span class="cmd-text">Start-MpScan</span> <span class="flag">-ScanType</span> QuickScan
+
+<span class="comment"># Full scan</span>
+<span class="cmd-text">Start-MpScan</span> <span class="flag">-ScanType</span> FullScan
+
+<span class="comment"># Add exclusion path — stops Defender deleting your tools</span>
+<span class="cmd-text">Add-MpPreference</span> <span class="flag">-ExclusionPath</span> <span class="path">"C:\YourToolsFolder"</span>
+
+<span class="comment"># Add exclusion by process name</span>
+<span class="cmd-text">Add-MpPreference</span> <span class="flag">-ExclusionProcess</span> <span class="string">"winaero.exe"</span>
+
+<span class="comment"># List current exclusions</span>
+<span class="cmd-text">Get-MpPreference</span> | Select-Object ExclusionPath, ExclusionProcess
+
+<span class="comment"># Disable real-time protection — temporary, resets on reboot</span>
+<span class="cmd-text">Set-MpPreference</span> <span class="flag">-DisableRealtimeMonitoring</span> $true</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- 11 ONE-LINERS -->
+        <div class="section" id="oneliners">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-icon">⚡</span>
+                <h2>11 · USEFUL ONE-LINERS</h2>
+                <button class="toggle-btn">▼</button>
+            </div>
+            <div class="section-body">
+                <div class="cmd-block">
+          <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Fix Windows reporting as Windows 10 instead of 11</span>
+<span class="cmd-text">Set-ItemProperty</span> <span class="flag">-Path</span> <span class="path">"HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion"</span> <span class="flag">-Name</span> <span class="string">"ProductName"</span> <span class="flag">-Value</span> <span class="string">"Windows 11 Home"</span>
+
+<span class="comment"># Check what Windows thinks it is</span>
+<span class="cmd-text">Get-ItemProperty</span> <span class="path">"HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion"</span> | Select-Object ProductName, CurrentBuild, DisplayVersion, ReleaseId
+
+<span class="comment"># Find what's eating your CPU right now</span>
+<span class="cmd-text">Get-Process</span> | Sort-Object CPU <span class="flag">-Descending</span> | Select-Object <span class="flag">-First</span> 10 Name, CPU, WorkingSet
+
+<span class="comment"># Find what's eating your RAM right now</span>
+<span class="cmd-text">Get-Process</span> | Sort-Object WorkingSet <span class="flag">-Descending</span> | Select-Object <span class="flag">-First</span> 10 Name, WorkingSet
+
+<span class="comment"># List all startup programs</span>
+<span class="cmd-text">Get-CimInstance</span> Win32_StartupCommand | Select-Object Name, Command, Location
+
+<span class="comment"># Check for services that should be running but aren't</span>
+<span class="cmd-text">Get-Service</span> | Where-Object { $_.Status <span class="flag">-eq</span> <span class="string">"Stopped"</span> -and $_.StartType <span class="flag">-eq</span> <span class="string">"Automatic"</span> }
+
+<span class="comment"># Export list of all installed programs</span>
+<span class="cmd-text">Get-ItemProperty</span> <span class="path">HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*</span> | Select-Object DisplayName, DisplayVersion, Publisher | Export-Csv <span class="path">"C:\installed-programs.csv"</span> <span class="flag">-NoTypeInformation</span>
+
+<span class="comment"># Check Windows license status</span>
+slmgr /xpr
+
+<span class="comment"># Clear temp files</span>
+<span class="cmd-text">Remove-Item</span> <span class="flag">-Path</span> <span class="string">"$env:TEMP\*"</span> <span class="flag">-Recurse -Force -ErrorAction</span> SilentlyContinue
+<span class="cmd-text">Remove-Item</span> <span class="flag">-Path</span> <span class="path">"C:\Windows\Temp\*"</span> <span class="flag">-Recurse -Force -ErrorAction</span> SilentlyContinue
+
+<span class="comment"># Restart Explorer — fixes frozen taskbar or desktop</span>
+<span class="cmd-text">Stop-Process</span> <span class="flag">-Name</span> explorer <span class="flag">-Force</span>; <span class="cmd-text">Start-Process</span> explorer</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- 12 REGISTRY PATHS -->
+        <div class="section" id="regpaths">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-icon">📍</span>
+                <h2>12 · COMMON REGISTRY PATHS</h2>
+                <button class="toggle-btn">▼</button>
+            </div>
+            <div class="section-body">
+                <table>
+                    <tr><th>What</th><th>Registry Path</th></tr>
+                    <tr><td>Windows Version Info</td><td>HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion</td></tr>
+                    <tr><td>Startup Programs (Machine)</td><td>HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run</td></tr>
+                    <tr><td>Startup Programs (User)</td><td>HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run</td></tr>
+                    <tr><td>Installed Programs</td><td>HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall</td></tr>
+                    <tr><td>Windows Update Settings</td><td>HKLM:\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings</td></tr>
+                    <tr><td>Defender Exclusions</td><td>HKLM:\SOFTWARE\Microsoft\Windows Defender\Exclusions</td></tr>
+                    <tr><td>Environment Variables</td><td>HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment</td></tr>
+                    <tr><td>Services</td><td>HKLM:\SYSTEM\CurrentControlSet\Services</td></tr>
+                    <tr><td>File Type Associations</td><td>HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts</td></tr>
+                    <tr><td>Context Menu Entries</td><td>HKCR:\*\shell</td></tr>
+                    <tr><td>Power Settings</td><td>HKLM:\SYSTEM\CurrentControlSet\Control\Power</td></tr>
+                    <tr><td>Network Adapters</td><td>HKLM:\SYSTEM\CurrentControlSet\Control\Network</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- 13 LINUX NETWORKING -->
+        <div class="section" id="linuxnet">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-icon">🐧</span>
+                <h2>13 · LINUX NETWORKING — MANUAL IP / NIC RECOVERY</h2>
+                <button class="toggle-btn">▼</button>
+            </div>
+            <div class="section-body">
+                <div class="warn-box">Works on any Linux: Proxmox, Debian, Ubuntu, Kali, etc. Use when a NIC shows DOWN or no IP assigned — common after hardware swaps or moving drives to a new motherboard.</div>
+
+                <div class="cmd-block">
+                    <div class="cmd-label">Check NIC Status</div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Show all network interfaces and their state</span>
+ip a
+
+<span class="comment"># Quick view — interface names and UP/DOWN state</span>
+ip link show
+
+<span class="comment"># Check a specific interface</span>
+ip link show enp1s0</pre>
+                </div>
+
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-warn">Temporary — Resets on Reboot</span> Bring a NIC Up Manually</div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Step 1 — Bring the interface up</span>
+ip link set <span class="string">enp1s0</span> up
+
+<span class="comment"># Step 2 — Assign a static IP with subnet</span>
+ip addr add <span class="path">192.168.100.24/24</span> dev <span class="string">enp1s0</span>
+
+<span class="comment"># Step 3 — Add default gateway</span>
+<span class="comment"># (skip if you get "File exists" — route already there)</span>
+ip route add default via <span class="path">192.168.100.1</span>
+
+<span class="comment"># Verify — ping your router</span>
+ping <span class="path">192.168.100.1</span></pre>
+                </div>
+
+                <div class="cmd-block">
+                    <div class="cmd-label">Find Your Interface Name</div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># List all interfaces — ignore 'lo' (loopback)</span>
+ip link show
+
+<span class="comment"># Common interface names:</span>
+<span class="comment">#  enp1s0, enp2s0  — PCIe ethernet (desktops/servers)</span>
+<span class="comment">#  eth0, eth1      — older naming convention</span>
+<span class="comment">#  ens18, ens19    — common in VMs (Proxmox/VMware)</span>
+<span class="comment">#  lo              — loopback, ignore this one</span></pre>
+                </div>
+
+                <div class="cmd-block">
+                    <div class="cmd-label">Make It Permanent — Proxmox / Debian</div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Edit the network config</span>
+nano <span class="path">/etc/network/interfaces</span>
+
+<span class="comment"># Add/update your interface block:</span>
+<span class="comment"># auto enp1s0</span>
+<span class="comment"># iface enp1s0 inet static</span>
+<span class="comment">#     address 192.168.100.24</span>
+<span class="comment">#     netmask 255.255.255.0</span>
+<span class="comment">#     gateway 192.168.100.1</span>
+
+<span class="comment"># Save: Ctrl+O then Enter then Ctrl+X</span>
+<span class="comment"># Apply without reboot:</span>
+systemctl restart networking</pre>
+                </div>
+
+                <div class="cmd-block">
+                    <div class="cmd-label">Make It Permanent — Ubuntu / Netplan</div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Edit netplan config (Ubuntu 18.04+)</span>
+nano <span class="path">/etc/netplan/00-installer-config.yaml</span>
+
+<span class="comment"># Example config:</span>
+<span class="comment"># network:</span>
+<span class="comment">#   version: 2</span>
+<span class="comment">#   ethernets:</span>
+<span class="comment">#     enp1s0:</span>
+<span class="comment">#       addresses: [192.168.100.24/24]</span>
+<span class="comment">#       gateway4: 192.168.100.1</span>
+<span class="comment">#       nameservers:</span>
+<span class="comment">#         addresses: [8.8.8.8, 1.1.1.1]</span>
+
+<span class="comment"># Apply changes</span>
+netplan apply</pre>
+                </div>
+
+                <div class="cmd-block">
+                    <div class="cmd-label">DNS &amp; Connectivity Checks</div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Test gateway</span>
+ping <span class="path">192.168.100.1</span>
+
+<span class="comment"># Test internet — no DNS involved</span>
+ping 8.8.8.8
+
+<span class="comment"># Test DNS resolution</span>
+ping google.com
+
+<span class="comment"># Check current DNS servers</span>
+cat <span class="path">/etc/resolv.conf</span>
+
+<span class="comment"># Flush DNS cache (systemd)</span>
+systemd-resolve <span class="flag">--flush-caches</span>
+
+<span class="comment"># Manual DNS lookup</span>
+nslookup google.com
+dig google.com</pre>
+                </div>
+
+                <div class="cmd-block">
+                    <div class="cmd-label">Useful Network Diagnostics</div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Show routing table</span>
+ip route show
+
+<span class="comment"># Show ARP table — who's on your network</span>
+arp -n
+
+<span class="comment"># Show open ports and listening services</span>
+ss <span class="flag">-tuln</span>
+
+<span class="comment"># Same but with process names</span>
+ss <span class="flag">-tulnp</span>
+
+<span class="comment"># Trace route to a host</span>
+traceroute google.com
+
+<span class="comment"># Check interface stats — errors, drops</span>
+ip <span class="flag">-s</span> link show enp1s0</pre>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 14 EVENT LOG TROUBLESHOOTING -->
+        <div class="section" id="eventlog">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-icon">📋</span>
+                <h2>14 · EVENT LOG TROUBLESHOOTING</h2>
+                <button class="toggle-btn">▼</button>
+            </div>
+            <div class="section-body">
+                <div class="cmd-block">
+                    <div class="cmd-label">Root Cause Analysis Methodology</div>
+                    <div class="warn-box">Don't stare at the error — look at the event BEFORE it. That tells you what Windows was trying to do when it failed.</div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Root Cause Analysis Steps:</span>
+<span class="comment"># 1. Find the ERROR event in Event Viewer</span>
+<span class="comment"># 2. Look at the event BEFORE it — that's what Windows was trying to do when it failed</span>
+<span class="comment"># 3. Follow the breadcrumbs: Event 400 (driver selected) → Event 411 (driver failed)</span>
+<span class="comment"># 4. The failure point isn't where the problem lives — it's where it surfaces</span>
+<span class="comment"># 5. Trace upstream to find the actual corruption</span></pre>
+                </div>
+                <div class="cmd-block">
+                    <div class="cmd-label">Key Kernel-PnP Events</div>
+                    <table>
+                        <tr><th>Event ID</th><th>Level</th><th>Meaning</th></tr>
+                        <tr><td>400</td><td>Info</td><td>Driver selected for device — shows driver name, version, rank</td></tr>
+                        <tr><td>401</td><td>Info</td><td>Device configured successfully</td></tr>
+                        <tr><td>410</td><td>Warning</td><td>Driver install failed — device not configured</td></tr>
+                        <tr><td>411</td><td>Error</td><td>Device failed to start — includes Problem code and Status</td></tr>
+                        <tr><td>420</td><td>Warning</td><td>Device requires further installation</td></tr>
+                        <tr><td>430</td><td>Info</td><td>Device removed</td></tr>
+                    </table>
+                </div>
+                <div class="cmd-block">
+                    <div class="cmd-label">Common Problem Codes (Event 411)</div>
+                    <table>
+                        <tr><th>Code</th><th>Hex</th><th>Meaning</th><th>Fix</th></tr>
+                        <tr><td>Code 1</td><td>0x01</td><td>Device not configured</td><td>Reinstall driver</td></tr>
+                        <tr><td>Code 10</td><td>0x0A</td><td>Device cannot start</td><td>Update/rollback driver</td></tr>
+                        <tr><td>Code 19</td><td>0x13</td><td>Registry config incomplete/damaged</td><td>Check UpperFilters/LowerFilters</td></tr>
+                        <tr><td>Code 22</td><td>0x16</td><td>Device is disabled</td><td>Enable in Device Manager</td></tr>
+                        <tr><td>Code 28</td><td>0x1C</td><td>No driver installed</td><td>Install correct driver</td></tr>
+                        <tr><td>Code 31</td><td>0x1F</td><td>Device not working properly</td><td>Remove and re-detect</td></tr>
+                        <tr><td>Code 43</td><td>0x2B</td><td>Device reported a problem</td><td>Hardware failing or driver crash</td></tr>
+                    </table>
+                </div>
+                <div class="cmd-block">
+                    <div class="cmd-label">Common NTSTATUS Codes (Event 411 Status field)</div>
+                    <table>
+                        <tr><th>Status</th><th>Meaning</th></tr>
+                        <tr><td>0xc0000034</td><td>STATUS_OBJECT_NAME_NOT_FOUND — registry key or file missing</td></tr>
+                        <tr><td>0xc0000010</td><td>STATUS_INVALID_DEVICE_REQUEST — driver rejected the request</td></tr>
+                        <tr><td>0xc00000e5</td><td>STATUS_INTERNAL_ERROR — driver internal failure</td></tr>
+                        <tr><td>0xc0000001</td><td>STATUS_UNSUCCESSFUL — generic failure</td></tr>
+                        <tr><td>0xc000009a</td><td>STATUS_INSUFFICIENT_RESOURCES — out of memory/resources</td></tr>
+                    </table>
+                </div>
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-ps">PowerShell</span> Event Log Queries</div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># List all devices currently in a problem state</span>
+pnputil /enum-devices /problem
+
+<span class="comment"># Get recent Kernel-PnP errors (Event 411 — device failed to start)</span>
+<span class="cmd-text">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{LogName=<span class="string">'Microsoft-Windows-Kernel-PnP/Configuration'</span>; Id=411} <span class="flag">-MaxEvents</span> 20 | Format-List
+
+<span class="comment"># Get recent driver selections (Event 400 — what driver was picked)</span>
+<span class="cmd-text">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{LogName=<span class="string">'Microsoft-Windows-Kernel-PnP/Configuration'</span>; Id=400} <span class="flag">-MaxEvents</span> 20 | Format-List
+
+<span class="comment"># Get all PnP config events from last 24 hours</span>
+<span class="cmd-text">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{LogName=<span class="string">'Microsoft-Windows-Kernel-PnP/Configuration'</span>; StartTime=(Get-Date).AddDays(-1)} | Format-List
+
+<span class="comment"># Search System log for device errors</span>
+<span class="cmd-text">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{LogName=<span class="string">'System'</span>; Level=2} <span class="flag">-MaxEvents</span> 50 | Where-Object { $_.ProviderName <span class="flag">-like</span> <span class="string">"*PnP*"</span> -or $_.ProviderName <span class="flag">-like</span> <span class="string">"*Driver*"</span> }
+
+<span class="comment"># Export PnP events to CSV for analysis</span>
+<span class="cmd-text">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{LogName=<span class="string">'Microsoft-Windows-Kernel-PnP/Configuration'</span>} <span class="flag">-MaxEvents</span> 100 | Export-Csv <span class="path">"C:\pnp-events.csv"</span> <span class="flag">-NoTypeInformation</span></pre>
+                </div>
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-ps">PowerShell</span> Code 19 Fix — UpperFilters / LowerFilters</div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Check for stale filters in a device class (replace GUID)</span>
+<span class="cmd-text">Get-ItemProperty</span> <span class="path">"HKLM:\SYSTEM\CurrentControlSet\Control\Class\{CLASS-GUID}"</span> | Select-Object UpperFilters, LowerFilters
+
+<span class="comment"># Common Class GUIDs:</span>
+<span class="comment"># Keyboard:  {4D36E96B-E325-11CE-BFC1-08002BE10318}</span>
+<span class="comment"># Mouse:     {4D36E96F-E325-11CE-BFC1-08002BE10318}</span>
+<span class="comment"># USB:       {36FC9E60-C465-11CF-8056-444553540000}</span>
+<span class="comment"># Display:   {4D36E968-E325-11CE-BFC1-08002BE10318}</span>
+<span class="comment"># Audio:     {4D36E96C-E325-11CE-BFC1-08002BE10318}</span>
+<span class="comment"># DVD/CD:    {4D36E965-E325-11CE-BFC1-08002BE10318}</span>
+<span class="comment"># Disk:      {4D36E967-E325-11CE-BFC1-08002BE10318}</span>
+<span class="comment"># Network:   {4D36E972-E325-11CE-BFC1-08002BE10318}</span>
+
+<span class="comment"># Remove a stale UpperFilter (example: remove SynTP from keyboard)</span>
+$val = (<span class="cmd-text">Get-ItemProperty</span> <span class="path">"HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4D36E96B-E325-11CE-BFC1-08002BE10318}"</span>).UpperFilters
+$val = $val | Where-Object { $_ <span class="flag">-ne</span> <span class="string">"SynTP"</span> }
+<span class="cmd-text">Set-ItemProperty</span> <span class="path">"HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4D36E96B-E325-11CE-BFC1-08002BE10318}"</span> <span class="flag">-Name</span> UpperFilters <span class="flag">-Value</span> $val
+
+<span class="comment"># Nuclear option — remove UpperFilters entirely</span>
+<span class="cmd-text">Remove-ItemProperty</span> <span class="path">"HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4D36E96B-E325-11CE-BFC1-08002BE10318}"</span> <span class="flag">-Name</span> UpperFilters</pre>
+                </div>
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-ps">PowerShell</span> Other Common Event Sources</div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># DCOM errors (Event 10016) — usually permissions issues</span>
+<span class="cmd-text">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{LogName=<span class="string">'System'</span>; Id=10016} <span class="flag">-MaxEvents</span> 10 | Format-List
+
+<span class="comment"># CAPI2 certificate errors</span>
+<span class="cmd-text">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{LogName=<span class="string">'Microsoft-Windows-CAPI2/Operational'</span>} <span class="flag">-MaxEvents</span> 20 | Format-List
+
+<span class="comment"># Windows Update errors</span>
+<span class="cmd-text">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{LogName=<span class="string">'Microsoft-Windows-WindowsUpdateClient/Operational'</span>; Level=2} <span class="flag">-MaxEvents</span> 20 | Format-List
+
+<span class="comment"># Disk/Storage errors</span>
+<span class="cmd-text">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{LogName=<span class="string">'System'</span>; ProviderName=<span class="string">'disk'</span>} <span class="flag">-MaxEvents</span> 20 | Format-List
+
+<span class="comment"># Blue Screen / Bugcheck events</span>
+<span class="cmd-text">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{LogName=<span class="string">'System'</span>; Id=1001} <span class="flag">-MaxEvents</span> 10 | Format-List
+
+<span class="comment"># GPU / Display driver events</span>
+<span class="cmd-text">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{LogName=<span class="string">'System'</span>; ProviderName=<span class="string">'Display'</span>} <span class="flag">-MaxEvents</span> 20 | Format-List</pre>
+                </div>
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-ps">PowerShell</span> OS Migration Cleanup — Orphaned Drivers &amp; Filters</div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># List ALL UpperFilters and LowerFilters across every device class</span>
+<span class="cmd-text">Get-ChildItem</span> <span class="path">"HKLM:\SYSTEM\CurrentControlSet\Control\Class"</span> | ForEach-Object {
+    $props = <span class="cmd-text">Get-ItemProperty</span> $_.PSPath
+    if ($props.UpperFilters -or $props.LowerFilters) {
+        [PSCustomObject]@{
+            Class = $props.Class
+            GUID = $_.PSChildName
+            UpperFilters = ($props.UpperFilters <span class="flag">-join</span> <span class="string">', '</span>)
+            LowerFilters = ($props.LowerFilters <span class="flag">-join</span> <span class="string">', '</span>)
+        }
+    }
+} | Format-Table <span class="flag">-AutoSize</span>
+
+<span class="comment"># Find ghost/non-present devices still in registry</span>
+pnputil /enum-devices /disconnected
+
+<span class="comment"># Remove a specific ghost device by instance ID</span>
+pnputil /remove-device <span class="string">"HID\VID_1C4F&amp;PID_0084&amp;MI_01&amp;Col03\7&amp;c5963c1&amp;0&amp;0002"</span></pre>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<footer>
+    <div>© 2025-2026 Sync-First Essentials LLC</div>
+    <div>Remember Chaos is Peace, Peace is Chaos!</div>
+</footer>
+
+<script>
+    // Toggle sections
+    function toggleSection(header) {
+        const body = header.nextElementSibling;
+        const btn = header.querySelector('.toggle-btn');
+        const isHidden = body.style.display === 'none';
+        body.style.display = isHidden ? 'block' : 'none';
+        btn.textContent = isHidden ? '▼' : '▶';
+    }
+
+    // Copy button
+    function copyCode(btn) {
+        const pre = btn.parentElement;
+        const text = pre.innerText.replace('copy', '').replace('copied', '').trim();
+        navigator.clipboard.writeText(text).then(() => {
+            btn.textContent = 'copied';
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.textContent = 'copy';
+                btn.classList.remove('copied');
+            }, 1800);
+        });
+    }
+
+    // Add copy buttons to all pre-elements
+    document.querySelectorAll('pre').forEach(pre => {
+        if (!pre.querySelector('.copy-btn')) {
+            const btn = document.createElement('button');
+            btn.className = 'copy-btn';
+            btn.textContent = 'copy';
+            btn.onclick = function() { copyCode(this); };
+            pre.insertBefore(btn, pre.firstChild);
+        }
+    });
+
+    // Search
+    const searchInput = document.getElementById('search');
+    const searchCount = document.getElementById('search-count');
+
+    searchInput.addEventListener('input', function() {
+        const query = this.value.toLowerCase().trim();
+
+        if (!query) {
+            // Reset all
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('hidden'));
+            document.querySelectorAll('.cmd-block').forEach(b => b.classList.remove('hidden'));
+            searchCount.textContent = '';
+            // Remove highlights
+            document.querySelectorAll('mark').forEach(m => {
+                m.replaceWith(m.textContent);
+            });
+            return;
+        }
+
+        let matchCount = 0;
+
+        document.querySelectorAll('.section').forEach(section => {
+            const sectionText = section.innerText.toLowerCase();
+            if (sectionText.includes(query)) {
+                section.classList.remove('hidden');
+                // Make sure body is visible
+                const body = section.querySelector('.section-body');
+                if (body) body.style.display = 'block';
+                const btn = section.querySelector('.toggle-btn');
+                if (btn) btn.textContent = '▼';
+                matchCount++;
+            } else {
+                section.classList.add('hidden');
+            }
+        });
+
+        searchCount.textContent = matchCount > 0 ? matchCount + ' sections' : 'no match';
+    });
+
+    // Active nav highlight on scroll
+    const sections = document.querySelectorAll('.section');
+    const navLinks = document.querySelectorAll('nav a');
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            if (section.offsetTop <= window.scrollY + 120) {
+                current = section.id;
+            }
+        });
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + current) {
+                link.classList.add('active');
+            }
+        });
+    });
+    // Site-wide nav toggle
+    function toggleSiteNav() {
+        document.getElementById('siteNav').classList.toggle('open');
+        document.getElementById('siteNavOverlay').classList.toggle('open');
+    }
+</script>
+</body>
+</html>
