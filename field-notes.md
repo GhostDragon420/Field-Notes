@@ -1,7 +1,7 @@
-# Field Fixes of a Migrated OS, So You Don't Have To!
-### PowerShell · CMD · Bcdedit · DISM · SFC · Registry · Drivers
+# FIELD FIXES OF A MIGRATED OS, So You Don't Have To!
+### PowerShell · CMD · Bcdedit · DISM · SFC · Registry · Drivers · Linux
 > Field Notes — Jon Merriman / SFE LLC
-> Last Updated: 2026-05-10
+> Last Updated: 2026-05-19
 
 ---
 
@@ -18,8 +18,9 @@
 10. [Security & Permissions](#security)
 11. [Useful One-Liners](#oneliners)
 12. [Common Registry Paths](#regpaths)
-13. [Linux Networking](#linuxnet)
+13. [Linux Networking — Manual IP / NIC Recovery](#linuxnet)
 14. [Event Log Troubleshooting](#eventlog)
+15. [Archive & Compression](#archives)
 
 ---
 
@@ -30,16 +31,16 @@
 # Full Windows version info
 Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" | Select-Object ProductName, CurrentBuild, DisplayVersion, ReleaseId
 
-# Check Windows edition and build
+# Check Windows edition — opens GUI popup
 winver
 
-# System info dump
+# Full system info dump
 Get-ComputerInfo
 
-# Quick OS version check
+# Quick OS version
 [System.Environment]::OSVersion
 
-# Check if running as Administrator
+# Check if running as Administrator (returns True/False)
 ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
 # Uptime
@@ -53,13 +54,13 @@ Get-CimInstance Win32_PhysicalMemory
 
 ### CMD
 ```cmd
-:: System info
+:: Full system info
 systeminfo
 
-:: Windows version
+:: Windows version string
 ver
 
-:: Environment variables
+:: All environment variables
 set
 ```
 
@@ -178,7 +179,7 @@ bcdedit /enum | findstr testsigning
 
 ---
 
-## 4. BOOT CONFIGURATION (BCDedit) <a name="bcdedit"></a>
+## 4. BOOT CONFIGURATION (Bcdedit) <a name="bcdedit"></a>
 
 > ⚠️ These commands require Admin. Secure Boot must be OFF to modify most of these.
 
@@ -293,11 +294,8 @@ Get-HotFix | Sort-Object InstalledOn -Descending
 
 # Remove a specific update
 wusa /uninstall /kb:XXXXXXX /quiet /norestart
-```
 
-### Pause Updates via Registry
-```powershell
-# Pause updates for 35 days
+# Pause updates for 35 days via registry
 $date = (Get-Date).AddDays(35).ToString("yyyy-MM-dd") + "T00:00:00Z"
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings" -Name "PauseUpdatesExpiryTime" -Value $date
 
@@ -326,16 +324,9 @@ Stop-Process -Id 1234 -Force
 # List all services
 Get-Service
 
-# Find a specific service
-Get-Service -Name "wuauserv"
-
-# Start a service
+# Start / Stop / Restart a service
 Start-Service -Name "ServiceName"
-
-# Stop a service
 Stop-Service -Name "ServiceName" -Force
-
-# Restart a service
 Restart-Service -Name "ServiceName"
 
 # Set service startup type
@@ -366,9 +357,6 @@ Clear-DnsClientCache
 
 # View DNS cache
 Get-DnsClientCache
-
-# Get routing table
-Get-NetRoute
 
 # Reset network stack
 netsh winsock reset
@@ -542,13 +530,6 @@ Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | S
 # Check Windows license status
 slmgr /xpr
 
-# Activate Windows (if needed)
-slmgr /ato
-
-# Generate full system health report
-powercfg /energy
-powercfg /batteryreport  # laptops only
-
 # Clear temp files
 Remove-Item -Path "$env:TEMP\*" -Recurse -Force -ErrorAction SilentlyContinue
 Remove-Item -Path "C:\Windows\Temp\*" -Recurse -Force -ErrorAction SilentlyContinue
@@ -559,9 +540,150 @@ Stop-Process -Name explorer -Force; Start-Process explorer
 
 ---
 
-## 12. EVENT LOG TROUBLESHOOTING <a name="eventlog"></a>
+## 🔑 12. COMMON REGISTRY PATHS <a name="regpaths"></a>
 
-### Methodology — Root Cause Analysis
+| What | Path |
+|------|------|
+| Windows Version Info | `HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion` |
+| Startup Programs (Machine) | `HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run` |
+| Startup Programs (User) | `HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run` |
+| Installed Programs | `HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall` |
+| Windows Update Settings | `HKLM:\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings` |
+| Defender Exclusions | `HKLM:\SOFTWARE\Microsoft\Windows Defender\Exclusions` |
+| Environment Variables | `HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment` |
+| Services | `HKLM:\SYSTEM\CurrentControlSet\Services` |
+| File Type Associations | `HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts` |
+| Context Menu Entries | `HKCR:\*\shell` |
+| Power Settings | `HKLM:\SYSTEM\CurrentControlSet\Control\Power` |
+| Network Adapters | `HKLM:\SYSTEM\CurrentControlSet\Control\Network` |
+
+---
+
+## 🐧 13. LINUX NETWORKING — MANUAL IP / NIC RECOVERY <a name="linuxnet"></a>
+
+> ⚠️ Works on any Linux: Proxmox, Debian, Ubuntu, Kali, etc. Use when a NIC shows DOWN or no IP assigned — common after hardware swaps or moving drives to a new motherboard.
+
+### Check NIC Status
+```bash
+# Show all network interfaces and their state
+ip a
+
+# Quick view — interface names and UP/DOWN state
+ip link show
+
+# Check a specific interface
+ip link show enp1s0
+```
+
+### Bring a NIC Up Manually (Temporary — Resets on Reboot)
+```bash
+# Step 1 — Bring the interface up
+ip link set enp1s0 up
+
+# Step 2 — Assign a static IP with subnet
+ip addr add 192.168.100.24/24 dev enp1s0
+
+# Step 3 — Add default gateway
+# (skip if you get "File exists" — route already there)
+ip route add default via 192.168.100.1
+
+# Verify — ping your router
+ping 192.168.100.1
+```
+
+### Common Interface Names
+```
+enp1s0, enp2s0  — PCIe ethernet (desktops/servers)
+eth0, eth1      — older naming convention
+ens18, ens19    — common in VMs (Proxmox/VMware)
+lo              — loopback, ignore this one
+```
+
+### Make It Permanent — Proxmox / Debian
+```bash
+# Edit the network config
+nano /etc/network/interfaces
+
+# Add/update your interface block:
+# auto enp1s0
+# iface enp1s0 inet static
+#     address 192.168.100.24
+#     netmask 255.255.255.0
+#     gateway 192.168.100.1
+
+# Apply without reboot:
+systemctl restart networking
+```
+
+### Make It Permanent — Ubuntu / Netplan
+```bash
+# Edit netplan config (Ubuntu 18.04+)
+nano /etc/netplan/00-installer-config.yaml
+
+# Example config:
+# network:
+#   version: 2
+#   ethernets:
+#     enp1s0:
+#       addresses: [192.168.100.24/24]
+#       gateway4: 192.168.100.1
+#       nameservers:
+#         addresses: [8.8.8.8, 1.1.1.1]
+
+# Apply changes
+netplan apply
+```
+
+### DNS & Connectivity Checks
+```bash
+# Test gateway
+ping 192.168.100.1
+
+# Test internet — no DNS involved
+ping 8.8.8.8
+
+# Test DNS resolution
+ping google.com
+
+# Check current DNS servers
+cat /etc/resolv.conf
+
+# Flush DNS cache (systemd)
+systemd-resolve --flush-caches
+
+# Manual DNS lookup
+nslookup google.com
+dig google.com
+```
+
+### Useful Network Diagnostics
+```bash
+# Show routing table
+ip route show
+
+# Show ARP table — who's on your network
+arp -n
+
+# Show open ports and listening services
+ss -tuln
+
+# Same but with process names
+ss -tulnp
+
+# Trace route to a host
+traceroute google.com
+
+# Check interface stats — errors, drops
+ip -s link show enp1s0
+```
+
+---
+
+## 📋 14. EVENT LOG TROUBLESHOOTING <a name="eventlog"></a>
+
+> ⚠️ Don't stare at the error — look at the event BEFORE it. That tells you what Windows was trying to do when it failed.
+
+### Root Cause Analysis Steps
 ```
 1. Find the ERROR event in Event Viewer
 2. Look at the event BEFORE it — that's what Windows was trying to do when it failed
@@ -570,28 +692,28 @@ Stop-Process -Name explorer -Force; Start-Process explorer
 5. Trace upstream to find the actual corruption
 ```
 
-### Key Kernel-PnP Events (Microsoft-Windows-Kernel-PnP/Configuration)
+### Key Kernel-PnP Events
 | Event ID | Level | Meaning |
 |----------|-------|---------|
-| 400 | Info | Driver selected for a device — shows driver name, version, rank |
+| 400 | Info | Driver selected for device — shows driver name, version, rank |
 | 401 | Info | Device configured successfully |
 | 410 | Warning | Driver install failed — device not configured |
 | 411 | Error | Device failed to start — includes Problem code and Status |
 | 420 | Warning | Device requires further installation |
 | 430 | Info | Device removed |
 
-### Common Problem Codes (from Event 411)
-| Problem Code | Hex | Meaning | Typical Fix |
-|-------------|-----|---------|-------------|
+### Common Problem Codes (Event 411)
+| Code | Hex | Meaning | Fix |
+|------|-----|---------|-----|
 | Code 1 | 0x01 | Device not configured | Reinstall driver |
 | Code 10 | 0x0A | Device cannot start | Update/rollback driver |
-| Code 19 | 0x13 | Registry config incomplete/damaged | Check UpperFilters/LowerFilters in Class key |
+| Code 19 | 0x13 | Registry config incomplete/damaged | Check UpperFilters/LowerFilters |
 | Code 22 | 0x16 | Device is disabled | Enable in Device Manager |
 | Code 28 | 0x1C | No driver installed | Install correct driver |
-| Code 31 | 0x1F | Device not working properly | Remove and re-detect device |
-| Code 43 | 0x2B | Device reported a problem — stopped | Hardware failing or driver crash |
+| Code 31 | 0x1F | Device not working properly | Remove and re-detect |
+| Code 43 | 0x2B | Device reported a problem | Hardware failing or driver crash |
 
-### Common NTSTATUS Codes (from Event 411 Status field)
+### Common NTSTATUS Codes (Event 411 Status field)
 | Status | Meaning |
 |--------|---------|
 | 0xc0000034 | STATUS_OBJECT_NAME_NOT_FOUND — registry key or file missing |
@@ -608,7 +730,7 @@ pnputil /enum-devices /problem
 # Get recent Kernel-PnP errors (Event 411 — device failed to start)
 Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-Kernel-PnP/Configuration'; Id=411} -MaxEvents 20 | Format-List
 
-# Get recent Kernel-PnP driver selections (Event 400 — what driver was picked)
+# Get recent driver selections (Event 400 — what driver was picked)
 Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-Kernel-PnP/Configuration'; Id=400} -MaxEvents 20 | Format-List
 
 # Get all PnP config events from last 24 hours
@@ -621,12 +743,12 @@ Get-WinEvent -FilterHashtable @{LogName='System'; Level=2} -MaxEvents 50 | Where
 Get-WinEvent -FilterHashtable @{LogName='Microsoft-Windows-Kernel-PnP/Configuration'} -MaxEvents 100 | Export-Csv "C:\pnp-events.csv" -NoTypeInformation
 ```
 
-### Code 19 Fix — UpperFilters / LowerFilters
+### PowerShell — Code 19 Fix (UpperFilters / LowerFilters)
 ```powershell
-# Check for stale filters in a device class (replace GUID with target class)
+# Check for stale filters in a device class (replace GUID)
 Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Class\{CLASS-GUID}" | Select-Object UpperFilters, LowerFilters
 
-# Common Class GUIDs
+# Common Class GUIDs:
 # Keyboard:  {4D36E96B-E325-11CE-BFC1-08002BE10318}
 # Mouse:     {4D36E96F-E325-11CE-BFC1-08002BE10318}
 # USB:       {36FC9E60-C465-11CF-8056-444553540000}
@@ -636,16 +758,16 @@ Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Class\{CLASS-GUID}" | S
 # Disk:      {4D36E967-E325-11CE-BFC1-08002BE10318}
 # Network:   {4D36E972-E325-11CE-BFC1-08002BE10318}
 
-# Remove a stale UpperFilter (example: remove SynTP from keyboard class)
+# Remove a stale UpperFilter (example: remove SynTP from keyboard)
 $val = (Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4D36E96B-E325-11CE-BFC1-08002BE10318}").UpperFilters
 $val = $val | Where-Object { $_ -ne "SynTP" }
 Set-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4D36E96B-E325-11CE-BFC1-08002BE10318}" -Name UpperFilters -Value $val
 
-# Nuclear option — remove UpperFilters entirely (device will use default stack)
+# Nuclear option — remove UpperFilters entirely
 Remove-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4D36E96B-E325-11CE-BFC1-08002BE10318}" -Name UpperFilters
 ```
 
-### Other Common Event Log Sources
+### PowerShell — Other Common Event Sources
 ```powershell
 # DCOM errors (Event 10016) — usually permissions issues
 Get-WinEvent -FilterHashtable @{LogName='System'; Id=10016} -MaxEvents 10 | Format-List
@@ -666,9 +788,9 @@ Get-WinEvent -FilterHashtable @{LogName='System'; Id=1001} -MaxEvents 10 | Forma
 Get-WinEvent -FilterHashtable @{LogName='System'; ProviderName='Display'} -MaxEvents 20 | Format-List
 ```
 
-### OS Migration Cleanup — Finding Orphaned Drivers & Filters
+### PowerShell — OS Migration Cleanup (Orphaned Drivers & Filters)
 ```powershell
-# List all UpperFilters and LowerFilters across ALL device classes
+# List ALL UpperFilters and LowerFilters across every device class
 Get-ChildItem "HKLM:\SYSTEM\CurrentControlSet\Control\Class" | ForEach-Object {
     $props = Get-ItemProperty $_.PSPath
     if ($props.UpperFilters -or $props.LowerFilters) {
@@ -690,24 +812,133 @@ pnputil /remove-device "HID\VID_1C4F&PID_0084&MI_01&Col03\7&c5963c1&0&0002"
 
 ---
 
-## 🔑 QUICK REFERENCE — COMMON REGISTRY PATHS
+## 📦 15. ARCHIVE & COMPRESSION <a name="archives"></a>
 
-| What | Path |
-|------|------|
-| Windows Version Info | `HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion` |
-| Startup Programs (Machine) | `HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run` |
-| Startup Programs (User) | `HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run` |
-| Installed Programs | `HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall` |
-| Windows Update Settings | `HKLM:\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings` |
-| Defender Exclusions | `HKLM:\SOFTWARE\Microsoft\Windows Defender\Exclusions` |
-| Environment Variables | `HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment` |
-| Services | `HKLM:\SYSTEM\CurrentControlSet\Services` |
+### PowerShell / CMD — Windows
+```powershell
+:: Extract a .zip file (built into modern Windows)
+tar -xf archive.zip
+
+:: Extract .zip to a specific folder
+tar -xf archive.zip -C C:\extracted
+
+# PowerShell — extract a zip
+Expand-Archive archive.zip -DestinationPath C:\extracted
+
+# PowerShell — create a zip from a folder
+Compress-Archive -Path C:\MyFolder\* -DestinationPath C:\backup.zip
+
+# PowerShell — add files to existing zip
+Compress-Archive -Path C:\newfile.txt -DestinationPath C:\backup.zip -Update
+
+:: Extract .tar.gz with Windows tar
+tar -xzf archive.tar.gz
+
+:: Extract .tar.bz2
+tar -xjf archive.tar.bz2
+
+:: List contents of a tar/zip without extracting
+tar -tf archive.tar.gz
+```
+
+### Linux — zip / unzip
+```bash
+# Install unzip if missing (Debian/Ubuntu/Proxmox)
+sudo apt install unzip
+
+# Install unzip on Fedora/CentOS
+sudo dnf install unzip
+
+# Extract a .zip file
+unzip archive.zip
+
+# Extract to a specific directory
+unzip archive.zip -d /home/user/extracted/
+
+# List contents without extracting
+unzip -l archive.zip
+
+# Test if archive is valid
+unzip -t archive.zip
+
+# Overwrite existing files without prompting
+unzip -o archive.zip
+
+# Create a zip file
+zip -r backup.zip /home/user/myfolder/
+```
+
+### Linux — tar (tarballs)
+```bash
+# Extract .tar (uncompressed)
+tar -xf archive.tar
+
+# Extract .tar.gz or .tgz (gzip compressed)
+tar -xzf archive.tar.gz
+
+# Extract .tar.bz2 (bzip2 compressed)
+tar -xjf archive.tar.bz2
+
+# Extract .tar.xz (xz compressed)
+tar -xJf archive.tar.xz
+
+# Extract to a specific directory
+tar -xf archive.tar.gz -C /home/user/extracted/
+
+# List contents without extracting
+tar -tf archive.tar.gz
+
+# Verbose — see files as they extract
+tar -xvf archive.tar.gz
+
+# Create a .tar.gz archive from a folder
+tar -czf backup.tar.gz /home/user/myfolder/
+
+# Create a .tar.bz2 archive (better compression, slower)
+tar -cjf backup.tar.bz2 /home/user/myfolder/
+```
+
+### Linux — 7z (7-Zip)
+```bash
+# Install 7zip (Debian/Ubuntu/Proxmox)
+sudo apt install p7zip-full
+
+# Install 7zip (Fedora/CentOS)
+sudo dnf install p7zip p7zip-plugins
+
+# Extract a .7z file
+7z x archive.7z
+
+# Extract to a specific directory
+7z x archive.7z -o/home/user/extracted/
+
+# List contents without extracting
+7z l archive.7z
+
+# Create a .7z archive
+7z a backup.7z /home/user/myfolder/
+
+# 7z can also handle .zip, .tar.gz, .rar, .iso, etc.
+7z x archive.zip
+7z x archive.rar
+```
+
+### Quick Reference — tar Flags
+| Flag | What It Does |
+|------|-------------|
+| -x | Extract files from archive |
+| -c | Create a new archive |
+| -f | Specify the archive filename |
+| -v | Verbose — show file names during operation |
+| -z | Filter through gzip (.tar.gz) |
+| -j | Filter through bzip2 (.tar.bz2) |
+| -J | Filter through xz (.tar.xz) |
+| -t | List contents without extracting |
+| -C | Extract to a specific directory |
 
 ---
 
----
-
-© 2025-2026 Sync-First Essentials LLC
-Remember Chaos is Peace, Peace is Chaos!
-
-*Field Notes — Jon Merriman / SFE LLC | Updated 2026-05-10*
+© 2025-2026 Jon Merriman / Sync-First Essentials LLC — All Rights Reserved
+*"Remember Chaos is Peace, Peace is Chaos!!"*
+🌐 [syncfirstessentials.com](https://syncfirstessentials.com) | ✉️ jon@syncfirstessentials.com
+Created by: Jon Merriman / Juggalospsyco420 / GhostDragon420
