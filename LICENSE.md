@@ -57,3 +57,4 @@ Copyright © 2025–2026 Jon Merriman / Sync-First Essentials LLC — All Rights
 Jurisdiction: State of Montana, USA
 
 Acknowledgment: By submitting code, mods, or stories to the SFE repositories, you acknowledge that you have read and agree to the terms of this ICLA.
+
