@@ -1,461 +1,388 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="https://field.syncfirstessentials.com/sfe-favicon-high-532x532.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/png" href="https://field.syncfirstessentials.com/sfe-favicon-high-532x532.png">
 
-    <title>FIELD Notes</title>
+<!-- Google tag (gtag.js) with Consent Mode -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6MZHZ6FKT2"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', {
+        'analytics_storage': 'denied',
+        'ad_storage': 'denied'
+    });
+    gtag('js', new Date());
+    gtag('config', 'G-6MZHZ6FKT2');
+</script>
+<title>FIELD Notes</title>
 
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600;700&display=swap');
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;600;700&display=swap');
+    :root {
+        --bg: #0d0f14;
+        --bg2: #13161e;
+        --bg3: #1a1e28;
+        --border: #2a2f3d;
+        --accent: #00e5ff;
+        --accent2: #7b61ff;
+        --accent3: #ff6b35;
+        --text: #c8d0e0;
+        --text-dim: #6b7590;
+        --green: #39ff14;
+        --yellow: #ffd600;
+        --red: #ff4444;
+        --code-bg: #0a0c10;
+    }
 
-        :root {
-            --bg: #0d0f14;
-            --bg2: #13161e;
-            --bg3: #1a1e28;
-            --border: #2a2f3d;
-            --accent: #00e5ff;
-            --accent2: #7b61ff;
-            --accent3: #ff6b35;
-            --text: #c8d0e0;
-            --text-dim: #6b7590;
-            --green: #39ff14;
-            --yellow: #ffd600;
-            --red: #ff4444;
-            --code-bg: #0a0c10;
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Barlow', sans-serif;
+        font-size: 15px;
+        line-height: 1.6;
+        background-attachment: fixed;
+    }
 
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'Barlow', sans-serif;
-            font-size: 15px;
-            line-height: 1.6;
-            background-attachment: fixed;
-        }
+    header {
+        background: linear-gradient(135deg, #0d0f14 0%, #1a1e28 50%, #0d0f14 100%);
+        border-bottom: 1px solid var(--accent);
+        padding: 28px 40px 20px 60px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 4px 30px rgba(0,229,255,0.08);
+    }
 
-        /* HEADER */
-        header {
-            background: linear-gradient(135deg, #0d0f14 0%, #1a1e28 50%, #0d0f14 100%);
-            border-bottom: 1px solid var(--accent);
-            padding: 28px 40px 20px 60px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 4px 30px rgba(0,229,255,0.08);
-        }
+    header h1 {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 1.5rem;
+        color: var(--accent);
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
 
-        header h1 {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 1.5rem;
-            color: var(--accent);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
+    header p {
+        color: var(--text-dim);
+        font-size: 0.8rem;
+        margin-top: 2px;
+        font-family: 'Share Tech Mono', monospace;
+    }
 
-        header p {
-            color: var(--text-dim);
-            font-size: 0.8rem;
-            margin-top: 2px;
-            font-family: 'Share Tech Mono', monospace;
-        }
+    .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
 
-        .header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
+    .search-wrap { display: flex; align-items: center; gap: 8px; }
 
-        /* SEARCH */
-        .search-wrap {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+    #search {
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        color: var(--text);
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.85rem;
+        padding: 6px 14px;
+        width: 240px;
+        outline: none;
+        transition: border-color 0.2s;
+    }
 
-        #search {
-            background: var(--code-bg);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            color: var(--text);
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 0.85rem;
-            padding: 6px 14px;
-            width: 240px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
+    #search:focus { border-color: var(--accent); }
+    #search::placeholder { color: var(--text-dim); }
 
-        #search:focus { border-color: var(--accent); }
-        #search::placeholder { color: var(--text-dim); }
+    .search-count {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        min-width: 60px;
+    }
 
-        .search-count {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            min-width: 60px;
-        }
+    .container { display: flex; max-width: 1400px; margin: 0 auto; }
 
-        /* LAYOUT */
-        .container {
-            display: flex;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
+    nav {
+        width: 220px;
+        min-width: 220px;
+        padding: 24px 0;
+        position: sticky;
+        top: 80px;
+        height: calc(100vh - 80px);
+        overflow-y: auto;
+        border-right: 1px solid var(--border);
+    }
 
-        /* SIDEBAR NAV */
-        nav {
-            width: 220px;
-            min-width: 220px;
-            padding: 24px 0;
-            position: sticky;
-            top: 80px;
-            height: calc(100vh - 80px);
-            overflow-y: auto;
-            border-right: 1px solid var(--border);
-        }
+    nav a {
+        display: block;
+        padding: 7px 24px;
+        color: var(--text-dim);
+        text-decoration: none;
+        font-size: 0.82rem;
+        font-family: 'Share Tech Mono', monospace;
+        border-left: 2px solid transparent;
+        transition: all 0.15s;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-        nav a {
-            display: block;
-            padding: 7px 24px;
-            color: var(--text-dim);
-            text-decoration: none;
-            font-size: 0.82rem;
-            font-family: 'Share Tech Mono', monospace;
-            border-left: 2px solid transparent;
-            transition: all 0.15s;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+    nav a:hover, nav a.active {
+        color: var(--accent);
+        border-left-color: var(--accent);
+        background: rgba(0,229,255,0.04);
+    }
 
-        nav a:hover, nav a.active {
-            color: var(--accent);
-            border-left-color: var(--accent);
-            background: rgba(0,229,255,0.04);
-        }
+    nav .nav-label {
+        padding: 16px 24px 4px;
+        font-size: 0.65rem;
+        letter-spacing: 2px;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        font-family: 'Barlow', sans-serif;
+        font-weight: 600;
+    }
 
-        nav .nav-label {
-            padding: 16px 24px 4px;
-            font-size: 0.65rem;
-            letter-spacing: 2px;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            font-family: 'Barlow', sans-serif;
-            font-weight: 600;
-        }
+    .hamburger {
+        position: fixed;
+        top: 18px;
+        left: 16px;
+        z-index: 200;
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        color: var(--accent);
+        cursor: pointer;
+        padding: 6px 10px;
+        font-size: 1.3rem;
+        line-height: 1;
+        transition: all 0.15s;
+    }
 
-        /* HAMBURGER MENU — SITE-WIDE NAV */
-        .hamburger {
-            position: fixed;
-            top: 18px;
-            left: 16px;
-            z-index: 200;
-            background: var(--bg3);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            color: var(--accent);
-            cursor: pointer;
-            padding: 6px 10px;
-            font-size: 1.3rem;
-            line-height: 1;
-            transition: all 0.15s;
-        }
+    .hamburger:hover {
+        border-color: var(--accent);
+        box-shadow: 0 0 10px rgba(0,229,255,0.2);
+    }
 
-        .hamburger:hover {
-            border-color: var(--accent);
-            box-shadow: 0 0 10px rgba(0,229,255,0.2);
-        }
+    .site-nav-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.7);
+        z-index: 150;
+    }
+    .site-nav-overlay.open { display: block; }
 
-        .site-nav-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 150;
-        }
+    .site-nav {
+        position: fixed;
+        top: 0; left: -280px;
+        width: 280px; height: 100%;
+        background: var(--bg2);
+        border-right: 1px solid var(--accent);
+        z-index: 201;
+        padding: 70px 0 20px;
+        overflow-y: auto;
+        transition: left 0.25s ease;
+    }
+    .site-nav.open { left: 0; }
 
-        .site-nav-overlay.open { display: block; }
+    .site-nav .nav-label {
+        padding: 16px 24px 4px;
+        font-size: 0.65rem;
+        letter-spacing: 2px;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        font-family: 'Barlow', sans-serif;
+        font-weight: 600;
+    }
 
-        .site-nav {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 280px;
-            height: 100%;
-            background: var(--bg2);
-            border-right: 1px solid var(--accent);
-            z-index: 201;
-            padding: 70px 0 20px;
-            overflow-y: auto;
-            transition: left 0.25s ease;
-        }
+    .site-nav a {
+        display: block;
+        padding: 10px 24px;
+        color: var(--text-dim);
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-family: 'Share Tech Mono', monospace;
+        border-left: 2px solid transparent;
+        transition: all 0.15s;
+    }
 
-        .site-nav.open { left: 0; }
+    .site-nav a:hover {
+        color: var(--accent);
+        border-left-color: var(--accent);
+        background: rgba(0,229,255,0.04);
+    }
 
-        .site-nav .nav-label {
-            padding: 16px 24px 4px;
-            font-size: 0.65rem;
-            letter-spacing: 2px;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            font-family: 'Barlow', sans-serif;
-            font-weight: 600;
-        }
+    .site-nav a.current {
+        color: var(--accent);
+        border-left-color: var(--accent);
+    }
 
-        .site-nav a {
-            display: block;
-            padding: 10px 24px;
-            color: var(--text-dim);
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-family: 'Share Tech Mono', monospace;
-            border-left: 2px solid transparent;
-            transition: all 0.15s;
-        }
+    main { flex: 1; padding: 32px 40px; min-width: 0; }
 
-        .site-nav a:hover {
-            color: var(--accent);
-            border-left-color: var(--accent);
-            background: rgba(0,229,255,0.04);
-        }
+    .section {
+        scroll-margin-top: 100px;
+        margin-bottom: 48px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        overflow: hidden;
+        transition: border-color 0.2s;
+    }
+    .section:hover { border-color: rgba(0,229,255,0.25); }
 
-        .site-nav a.current {
-            color: var(--accent);
-            border-left-color: var(--accent);
-        }
+    .section-header {
+        background: var(--bg3);
+        padding: 14px 20px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        user-select: none;
+    }
 
+    .section-header h2 {
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.95rem;
+        color: var(--accent);
+        letter-spacing: 1px;
+        flex: 1;
+    }
 
-        /* MAIN CONTENT */
-        main {
-            flex: 1;
-            padding: 32px 40px;
-            min-width: 0;
-        }
+    .section-icon { font-size: 1.1rem; width: 28px; text-align: center; }
 
-        /* SECTIONS */
-        .section {
-            scroll-margin-top: 100px;
-            margin-bottom: 48px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            overflow: hidden;
-            transition: border-color 0.2s;
-        }
+    .toggle-btn {
+        background: none;
+        border: none;
+        color: var(--text-dim);
+        cursor: pointer;
+        font-size: 0.8rem;
+        font-family: 'Share Tech Mono', monospace;
+        padding: 2px 8px;
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        transition: all 0.15s;
+    }
+    .toggle-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-        .section:hover { border-color: rgba(0,229,255,0.25); }
+    .section-body { padding: 20px; }
 
-        .section-header {
-            background: var(--bg3);
-            padding: 14px 20px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            user-select: none;
-        }
+    .cmd-block { margin-bottom: 20px; }
+    .cmd-block:last-child { margin-bottom: 0; }
 
-        .section-header h2 {
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 0.95rem;
-            color: var(--accent);
-            letter-spacing: 1px;
-            flex: 1;
-        }
+    .cmd-label {
+        font-size: 0.72rem;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        font-weight: 600;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .cmd-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-        .section-icon {
-            font-size: 1.1rem;
-            width: 28px;
-            text-align: center;
-        }
+    .badge { font-size: 0.65rem; padding: 1px 7px; border-radius: 3px; font-weight: 700; letter-spacing: 1px; }
+    .badge-ps { background: rgba(123,97,255,0.2); color: var(--accent2); border: 1px solid rgba(123,97,255,0.3); }
+    .badge-cmd { background: rgba(255,107,53,0.2); color: var(--accent3); border: 1px solid rgba(255,107,53,0.3); }
+    .badge-reg { background: rgba(0,229,255,0.1); color: var(--accent); border: 1px solid rgba(0,229,255,0.2); }
+    .badge-warn { background: rgba(255,214,0,0.1); color: var(--yellow); border: 1px solid rgba(255,214,0,0.2); }
+    .badge-linux { background: rgba(57,255,20,0.1); color: var(--green); border: 1px solid rgba(57,255,20,0.2); }
 
-        .toggle-btn {
-            background: none;
-            border: none;
-            color: var(--text-dim);
-            cursor: pointer;
-            font-size: 0.8rem;
-            font-family: 'Share Tech Mono', monospace;
-            padding: 2px 8px;
-            border: 1px solid var(--border);
-            border-radius: 3px;
-            transition: all 0.15s;
-        }
+    pre {
+        background: var(--code-bg);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 14px 16px;
+        overflow-x: auto;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.82rem;
+        line-height: 1.7;
+        position: relative;
+    }
+    pre:hover .copy-btn { opacity: 1; }
 
-        .toggle-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .copy-btn {
+        position: absolute;
+        top: 8px; right: 8px;
+        background: var(--bg3);
+        border: 1px solid var(--border);
+        color: var(--text-dim);
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.7rem;
+        padding: 3px 10px;
+        border-radius: 3px;
+        cursor: pointer;
+        opacity: 0;
+        transition: all 0.15s;
+    }
+    .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .copy-btn.copied { color: var(--green); border-color: var(--green); opacity: 1; }
 
-        .section-body { padding: 20px; }
+    .comment { color: #4a5568; }
+    .cmd-text { color: #a8d8a8; }
+    .flag { color: #87ceeb; }
+    .path { color: #ffd700; }
+    .string { color: #ffa07a; }
 
-        /* COMMAND BLOCKS */
-        .cmd-block {
-            margin-bottom: 20px;
-        }
+    table { width: 100%; border-collapse: collapse; font-size: 0.83rem; font-family: 'Share Tech Mono', monospace; }
+    th { background: var(--bg3); color: var(--accent); padding: 8px 14px; text-align: left; font-size: 0.75rem; letter-spacing: 1px; border-bottom: 1px solid var(--border); }
+    td { padding: 7px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    td:first-child { color: var(--accent2); white-space: nowrap; }
 
-        .cmd-block:last-child { margin-bottom: 0; }
+    .warn-box {
+        background: rgba(255,214,0,0.05);
+        border: 1px solid rgba(255,214,0,0.2);
+        border-radius: 4px;
+        padding: 10px 14px;
+        font-size: 0.82rem;
+        color: var(--yellow);
+        margin-bottom: 14px;
+        font-family: 'Share Tech Mono', monospace;
+    }
+    .warn-box::before { content: '\26A0  '; }
 
-        .cmd-label {
-            font-size: 0.72rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--text-dim);
-            font-weight: 600;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+    mark { background: rgba(0,229,255,0.25); color: var(--accent); border-radius: 2px; padding: 0 1px; }
+    .hidden { display: none !important; }
 
-        .cmd-label::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--border);
-        }
+    footer {
+        border-top: 1px solid var(--border);
+        padding: 16px 40px;
+        color: var(--text-dim);
+        font-size: 0.75rem;
+        font-family: 'Share Tech Mono', monospace;
+        text-align: center;
+    }
 
-        .badge {
-            font-size: 0.65rem;
-            padding: 1px 7px;
-            border-radius: 3px;
-            font-weight: 700;
-            letter-spacing: 1px;
-        }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent2); }
 
-        .badge-ps { background: rgba(123,97,255,0.2); color: var(--accent2); border: 1px solid rgba(123,97,255,0.3); }
-        .badge-cmd { background: rgba(255,107,53,0.2); color: var(--accent3); border: 1px solid rgba(255,107,53,0.3); }
-        .badge-reg { background: rgba(0,229,255,0.1); color: var(--accent); border: 1px solid rgba(0,229,255,0.2); }
-        .badge-warn { background: rgba(255,214,0,0.1); color: var(--yellow); border: 1px solid rgba(255,214,0,0.2); }
-
-        pre {
-            background: var(--code-bg);
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            padding: 14px 16px;
-            overflow-x: auto;
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 0.82rem;
-            line-height: 1.7;
-            position: relative;
-        }
-
-        pre:hover .copy-btn { opacity: 1; }
-
-        .copy-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: var(--bg3);
-            border: 1px solid var(--border);
-            color: var(--text-dim);
-            font-family: 'Share Tech Mono', monospace;
-            font-size: 0.7rem;
-            padding: 3px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-            opacity: 0;
-            transition: all 0.15s;
-        }
-
-        .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
-        .copy-btn.copied { color: var(--green); border-color: var(--green); opacity: 1; }
-
-        .comment { color: #4a5568; }
-        .cmd-text { color: #a8d8a8; }
-        .flag { color: #87ceeb; }
-        .path { color: #ffd700; }
-        .string { color: #ffa07a; }
-
-        /* TABLE */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.83rem;
-            font-family: 'Share Tech Mono', monospace;
-        }
-
-        th {
-            background: var(--bg3);
-            color: var(--accent);
-            padding: 8px 14px;
-            text-align: left;
-            font-size: 0.75rem;
-            letter-spacing: 1px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        td {
-            padding: 7px 14px;
-            border-bottom: 1px solid var(--border);
-            color: var(--text);
-            vertical-align: top;
-        }
-
-        tr:last-child td { border-bottom: none; }
-        tr:hover td { background: rgba(255,255,255,0.02); }
-
-        td:first-child { color: var(--accent2); white-space: nowrap; }
-
-        /* WARN BOX */
-        .warn-box {
-            background: rgba(255,214,0,0.05);
-            border: 1px solid rgba(255,214,0,0.2);
-            border-radius: 4px;
-            padding: 10px 14px;
-            font-size: 0.82rem;
-            color: var(--yellow);
-            margin-bottom: 14px;
-            font-family: 'Share Tech Mono', monospace;
-        }
-
-        .warn-box::before { content: '⚠ '; }
-
-        /* HIGHLIGHT for search */
-        mark {
-            background: rgba(0,229,255,0.25);
-            color: var(--accent);
-            border-radius: 2px;
-            padding: 0 1px;
-        }
-
-        .hidden { display: none !important; }
-
-        /* FOOTER */
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 16px 40px;
-            color: var(--text-dim);
-            font-size: 0.75rem;
-            font-family: 'Share Tech Mono', monospace;
-            text-align: center;
-        }
-
-        /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent2); }
-
-        @media (max-width: 800px) {
-            nav { display: none; }
-            main { padding: 20px; }
-            header { padding: 16px 20px; }
-            .header-row { flex-direction: column; align-items: flex-start; }
-            #search { width: 100%; }
-        }
-    </style>
+    @media (max-width: 800px) {
+        nav { display: none; }
+        main { padding: 20px; }
+        header { padding: 16px 20px; }
+        .header-row { flex-direction: column; align-items: flex-start; }
+        #search { width: 100%; }
+    }
+</style>
 </head>
 <body>
 <!-- SITE-WIDE NAV -->
-<button class="hamburger" onclick="toggleSiteNav()">☰</button>
+<button class="hamburger" onclick="toggleSiteNav()">&#9776;</button>
 <div class="site-nav-overlay" id="siteNavOverlay" onclick="toggleSiteNav()"></div>
 <nav class="site-nav" id="siteNav">
     <div class="nav-label">SFE LLC</div>
@@ -465,13 +392,12 @@
     <a href="https://about.syncfirstessentials.com">About</a>
     <a href="https://contact.syncfirstessentials.com">Contact</a>
     <a href="https://license.syncfirstessentials.com">License</a>
-    <!-- <li><a href="https://donations.syncfirstessentials.com">Donations</a></li> -->
 </nav>
 <header>
     <div class="header-row">
         <div>
             <h1>// FIELD FIXES OF A MIGRATED OS, So You Don't Have To!</h1>
-            <p>PowerShell · CMD · Bcdedit · DISM · SFC · Registry · Drivers &nbsp;|&nbsp;Field Notes — Jon Merriman / SFE LLC &nbsp;|&nbsp; 2026-05-10</p>
+            <p>PowerShell &middot; CMD &middot; Bcdedit &middot; DISM &middot; SFC &middot; Registry &middot; Drivers &nbsp;|&nbsp;Field Notes &mdash; Jon Merriman / SFE LLC &nbsp;|&nbsp; 2026-05-19</p>
         </div>
         <div class="search-wrap">
             <input type="text" id="search" placeholder="Search commands..." autocomplete="off">
@@ -483,31 +409,30 @@
 <div class="container">
     <nav id="sidenav">
         <div class="nav-label">Sections</div>
-        <a href="#sysinfo">01 · System Info</a>
-        <a href="#registry">02 · Registry</a>
-        <a href="#drivers">03 · Drivers</a>
-        <a href="#bcdedit">04 · Bcdedit</a>
-        <a href="#repair">05 · SFC / DISM</a>
-        <a href="#winupdate">06 · Windows Update</a>
-        <a href="#processes">07 · Processes</a>
-        <a href="#network">08 · Network</a>
-        <a href="#disk">09 · Disk</a>
-        <a href="#security">10 · Security</a>
-        <a href="#oneliners">11 · One-Liners</a>
-        <a href="#regpaths">12 · Registry Paths</a>
-        <a href="#linuxnet">13 · Linux Networking</a>
-        <a href="#eventlog">14 · Event Log</a>
-
+        <a href="#sysinfo">01 &middot; System Info</a>
+        <a href="#registry">02 &middot; Registry</a>
+        <a href="#drivers">03 &middot; Drivers</a>
+        <a href="#bcdedit">04 &middot; Bcdedit</a>
+        <a href="#repair">05 &middot; SFC / DISM</a>
+        <a href="#winupdate">06 &middot; Windows Update</a>
+        <a href="#processes">07 &middot; Processes</a>
+        <a href="#network">08 &middot; Network</a>
+        <a href="#disk">09 &middot; Disk</a>
+        <a href="#security">10 &middot; Security</a>
+        <a href="#oneliners">11 &middot; One-Liners</a>
+        <a href="#regpaths">12 &middot; Registry Paths</a>
+        <a href="#linuxnet">13 &middot; Linux Networking</a>
+        <a href="#eventlog">14 &middot; Event Log</a>
+        <a href="#archives">15 &middot; Archives</a>
     </nav>
 
     <main>
-
         <!-- 01 SYSTEM INFO -->
         <div class="section" id="sysinfo">
             <div class="section-header" onclick="toggleSection(this)">
-                <span class="section-icon">💻</span>
-                <h2>01 · SYSTEM INFO & DIAGNOSTICS</h2>
-                <button class="toggle-btn">▼</button>
+                <span class="section-icon">&#x1F4BB;</span>
+                <h2>01 &middot; SYSTEM INFO &amp; DIAGNOSTICS</h2>
+                <button class="toggle-btn">&#9660;</button>
             </div>
             <div class="section-body">
                 <div class="cmd-block">
@@ -552,9 +477,9 @@ set</pre>
         <!-- 02 REGISTRY -->
         <div class="section" id="registry">
             <div class="section-header" onclick="toggleSection(this)">
-                <span class="section-icon">🗂️</span>
-                <h2>02 · REGISTRY COMMANDS</h2>
-                <button class="toggle-btn">▼</button>
+                <span class="section-icon">&#x1F5C2;&#xFE0F;</span>
+                <h2>02 &middot; REGISTRY COMMANDS</h2>
+                <button class="toggle-btn">&#9660;</button>
             </div>
             <div class="section-body">
                 <div class="cmd-block">
@@ -600,9 +525,9 @@ set</pre>
         <!-- 03 DRIVERS -->
         <div class="section" id="drivers">
             <div class="section-header" onclick="toggleSection(this)">
-                <span class="section-icon">🔧</span>
-                <h2>03 · DRIVER MANAGEMENT</h2>
-                <button class="toggle-btn">▼</button>
+                <span class="section-icon">&#x1F527;</span>
+                <h2>03 &middot; DRIVER MANAGEMENT</h2>
+                <button class="toggle-btn">&#9660;</button>
             </div>
             <div class="section-body">
                 <div class="cmd-block">
@@ -678,9 +603,9 @@ bcdedit /enum | findstr testsigning</pre>
         <!-- 04 BCDEDIT -->
         <div class="section" id="bcdedit">
             <div class="section-header" onclick="toggleSection(this)">
-                <span class="section-icon">⚙️</span>
-                <h2>04 · BOOT CONFIGURATION (Bcdedit)</h2>
-                <button class="toggle-btn">▼</button>
+                <span class="section-icon">&#9881;&#65039;</span>
+                <h2>04 &middot; BOOT CONFIGURATION (Bcdedit)</h2>
+                <button class="toggle-btn">&#9660;</button>
             </div>
             <div class="section-body">
                 <div class="warn-box">Requires Admin. Secure Boot must be OFF to modify most of these.</div>
@@ -726,9 +651,9 @@ bcdedit /delete {identifier}</pre>
         <!-- 05 REPAIR -->
         <div class="section" id="repair">
             <div class="section-header" onclick="toggleSection(this)">
-                <span class="section-icon">🛠️</span>
-                <h2>05 · SYSTEM FILE & IMAGE REPAIR (SFC / DISM)</h2>
-                <button class="toggle-btn">▼</button>
+                <span class="section-icon">&#x1F6E0;&#xFE0F;</span>
+                <h2>05 &middot; SYSTEM FILE &amp; IMAGE REPAIR (SFC / DISM)</h2>
+                <button class="toggle-btn">&#9660;</button>
             </div>
             <div class="section-body">
                 <div class="cmd-block">
@@ -777,9 +702,9 @@ DISM /Online /Cleanup-Image /StartComponentCleanup</pre>
         <!-- 06 WINDOWS UPDATE -->
         <div class="section" id="winupdate">
             <div class="section-header" onclick="toggleSection(this)">
-                <span class="section-icon">🔄</span>
-                <h2>06 · WINDOWS UPDATE CONTROL</h2>
-                <button class="toggle-btn">▼</button>
+                <span class="section-icon">&#x1F504;</span>
+                <h2>06 &middot; WINDOWS UPDATE CONTROL</h2>
+                <button class="toggle-btn">&#9660;</button>
             </div>
             <div class="section-body">
                 <div class="cmd-block">
@@ -821,9 +746,9 @@ $date = (Get-Date).AddDays(35).ToString(<span class="string">"yyyy-MM-dd"</span>
         <!-- 07 PROCESSES -->
         <div class="section" id="processes">
             <div class="section-header" onclick="toggleSection(this)">
-                <span class="section-icon">⚡</span>
-                <h2>07 · PROCESS & SERVICE MANAGEMENT</h2>
-                <button class="toggle-btn">▼</button>
+                <span class="section-icon">&#x26A1;</span>
+                <h2>07 &middot; PROCESS &amp; SERVICE MANAGEMENT</h2>
+                <button class="toggle-btn">&#9660;</button>
             </div>
             <div class="section-body">
                 <div class="cmd-block">
@@ -856,13 +781,12 @@ $date = (Get-Date).AddDays(35).ToString(<span class="string">"yyyy-MM-dd"</span>
                 </div>
             </div>
         </div>
-
         <!-- 08 NETWORK -->
         <div class="section" id="network">
             <div class="section-header" onclick="toggleSection(this)">
-                <span class="section-icon">🌐</span>
-                <h2>08 · NETWORK COMMANDS</h2>
-                <button class="toggle-btn">▼</button>
+                <span class="section-icon">&#x1F310;</span>
+                <h2>08 &middot; NETWORK COMMANDS</h2>
+                <button class="toggle-btn">&#9660;</button>
             </div>
             <div class="section-body">
                 <div class="cmd-block">
@@ -920,9 +844,9 @@ ipconfig /all</pre>
         <!-- 09 DISK -->
         <div class="section" id="disk">
             <div class="section-header" onclick="toggleSection(this)">
-                <span class="section-icon">💾</span>
-                <h2>09 · DISK & STORAGE</h2>
-                <button class="toggle-btn">▼</button>
+                <span class="section-icon">&#x1F4BE;</span>
+                <h2>09 &middot; DISK &amp; STORAGE</h2>
+                <button class="toggle-btn">&#9660;</button>
             </div>
             <div class="section-body">
                 <div class="cmd-block">
@@ -971,9 +895,9 @@ list disk</pre>
         <!-- 10 SECURITY -->
         <div class="section" id="security">
             <div class="section-header" onclick="toggleSection(this)">
-                <span class="section-icon">🔒</span>
-                <h2>10 · SECURITY & PERMISSIONS</h2>
-                <button class="toggle-btn">▼</button>
+                <span class="section-icon">&#x1F512;</span>
+                <h2>10 &middot; SECURITY &amp; PERMISSIONS</h2>
+                <button class="toggle-btn">&#9660;</button>
             </div>
             <div class="section-body">
                 <div class="cmd-block">
@@ -1040,9 +964,9 @@ icacls <span class="path">"C:\path\to\file"</span> /grant Administrators:F</pre>
         <!-- 11 ONE-LINERS -->
         <div class="section" id="oneliners">
             <div class="section-header" onclick="toggleSection(this)">
-                <span class="section-icon">⚡</span>
-                <h2>11 · USEFUL ONE-LINERS</h2>
-                <button class="toggle-btn">▼</button>
+                <span class="section-icon">&#x26A1;</span>
+                <h2>11 &middot; USEFUL ONE-LINERS</h2>
+                <button class="toggle-btn">&#9660;</button>
             </div>
             <div class="section-body">
                 <div class="cmd-block">
@@ -1083,9 +1007,9 @@ slmgr /xpr
         <!-- 12 REGISTRY PATHS -->
         <div class="section" id="regpaths">
             <div class="section-header" onclick="toggleSection(this)">
-                <span class="section-icon">📍</span>
-                <h2>12 · COMMON REGISTRY PATHS</h2>
-                <button class="toggle-btn">▼</button>
+                <span class="section-icon">&#x1F4CD;</span>
+                <h2>12 &middot; COMMON REGISTRY PATHS</h2>
+                <button class="toggle-btn">&#9660;</button>
             </div>
             <div class="section-body">
                 <table>
@@ -1105,16 +1029,15 @@ slmgr /xpr
                 </table>
             </div>
         </div>
-
         <!-- 13 LINUX NETWORKING -->
         <div class="section" id="linuxnet">
             <div class="section-header" onclick="toggleSection(this)">
-                <span class="section-icon">🐧</span>
-                <h2>13 · LINUX NETWORKING — MANUAL IP / NIC RECOVERY</h2>
-                <button class="toggle-btn">▼</button>
+                <span class="section-icon">&#x1F427;</span>
+                <h2>13 &middot; LINUX NETWORKING &mdash; MANUAL IP / NIC RECOVERY</h2>
+                <button class="toggle-btn">&#9660;</button>
             </div>
             <div class="section-body">
-                <div class="warn-box">Works on any Linux: Proxmox, Debian, Ubuntu, Kali, etc. Use when a NIC shows DOWN or no IP assigned — common after hardware swaps or moving drives to a new motherboard.</div>
+                <div class="warn-box">Works on any Linux: Proxmox, Debian, Ubuntu, Kali, etc. Use when a NIC shows DOWN or no IP assigned &mdash; common after hardware swaps or moving drives to a new motherboard.</div>
 
                 <div class="cmd-block">
                     <div class="cmd-label">Check NIC Status</div>
@@ -1157,7 +1080,7 @@ ip link show
                 </div>
 
                 <div class="cmd-block">
-                    <div class="cmd-label">Make It Permanent — Proxmox / Debian</div>
+                    <div class="cmd-label">Make It Permanent &mdash; Proxmox / Debian</div>
                     <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Edit the network config</span>
 nano <span class="path">/etc/network/interfaces</span>
 
@@ -1174,7 +1097,7 @@ systemctl restart networking</pre>
                 </div>
 
                 <div class="cmd-block">
-                    <div class="cmd-label">Make It Permanent — Ubuntu / Netplan</div>
+                    <div class="cmd-label">Make It Permanent &mdash; Ubuntu / Netplan</div>
                     <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Edit netplan config (Ubuntu 18.04+)</span>
 nano <span class="path">/etc/netplan/00-installer-config.yaml</span>
 
@@ -1234,21 +1157,19 @@ traceroute google.com
 <span class="comment"># Check interface stats — errors, drops</span>
 ip <span class="flag">-s</span> link show enp1s0</pre>
                 </div>
-
             </div>
         </div>
-
         <!-- 14 EVENT LOG TROUBLESHOOTING -->
         <div class="section" id="eventlog">
             <div class="section-header" onclick="toggleSection(this)">
-                <span class="section-icon">📋</span>
-                <h2>14 · EVENT LOG TROUBLESHOOTING</h2>
-                <button class="toggle-btn">▼</button>
+                <span class="section-icon">&#x1F4CB;</span>
+                <h2>14 &middot; EVENT LOG TROUBLESHOOTING</h2>
+                <button class="toggle-btn">&#9660;</button>
             </div>
             <div class="section-body">
                 <div class="cmd-block">
                     <div class="cmd-label">Root Cause Analysis Methodology</div>
-                    <div class="warn-box">Don't stare at the error — look at the event BEFORE it. That tells you what Windows was trying to do when it failed.</div>
+                    <div class="warn-box">Don't stare at the error &mdash; look at the event BEFORE it. That tells you what Windows was trying to do when it failed.</div>
                     <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Root Cause Analysis Steps:</span>
 <span class="comment"># 1. Find the ERROR event in Event Viewer</span>
 <span class="comment"># 2. Look at the event BEFORE it — that's what Windows was trying to do when it failed</span>
@@ -1260,10 +1181,10 @@ ip <span class="flag">-s</span> link show enp1s0</pre>
                     <div class="cmd-label">Key Kernel-PnP Events</div>
                     <table>
                         <tr><th>Event ID</th><th>Level</th><th>Meaning</th></tr>
-                        <tr><td>400</td><td>Info</td><td>Driver selected for device — shows driver name, version, rank</td></tr>
+                        <tr><td>400</td><td>Info</td><td>Driver selected for device &mdash; shows driver name, version, rank</td></tr>
                         <tr><td>401</td><td>Info</td><td>Device configured successfully</td></tr>
-                        <tr><td>410</td><td>Warning</td><td>Driver install failed — device not configured</td></tr>
-                        <tr><td>411</td><td>Error</td><td>Device failed to start — includes Problem code and Status</td></tr>
+                        <tr><td>410</td><td>Warning</td><td>Driver install failed &mdash; device not configured</td></tr>
+                        <tr><td>411</td><td>Error</td><td>Device failed to start &mdash; includes Problem code and Status</td></tr>
                         <tr><td>420</td><td>Warning</td><td>Device requires further installation</td></tr>
                         <tr><td>430</td><td>Info</td><td>Device removed</td></tr>
                     </table>
@@ -1285,11 +1206,11 @@ ip <span class="flag">-s</span> link show enp1s0</pre>
                     <div class="cmd-label">Common NTSTATUS Codes (Event 411 Status field)</div>
                     <table>
                         <tr><th>Status</th><th>Meaning</th></tr>
-                        <tr><td>0xc0000034</td><td>STATUS_OBJECT_NAME_NOT_FOUND — registry key or file missing</td></tr>
-                        <tr><td>0xc0000010</td><td>STATUS_INVALID_DEVICE_REQUEST — driver rejected the request</td></tr>
-                        <tr><td>0xc00000e5</td><td>STATUS_INTERNAL_ERROR — driver internal failure</td></tr>
-                        <tr><td>0xc0000001</td><td>STATUS_UNSUCCESSFUL — generic failure</td></tr>
-                        <tr><td>0xc000009a</td><td>STATUS_INSUFFICIENT_RESOURCES — out of memory/resources</td></tr>
+                        <tr><td>0xc0000034</td><td>STATUS_OBJECT_NAME_NOT_FOUND &mdash; registry key or file missing</td></tr>
+                        <tr><td>0xc0000010</td><td>STATUS_INVALID_DEVICE_REQUEST &mdash; driver rejected the request</td></tr>
+                        <tr><td>0xc00000e5</td><td>STATUS_INTERNAL_ERROR &mdash; driver internal failure</td></tr>
+                        <tr><td>0xc0000001</td><td>STATUS_UNSUCCESSFUL &mdash; generic failure</td></tr>
+                        <tr><td>0xc000009a</td><td>STATUS_INSUFFICIENT_RESOURCES &mdash; out of memory/resources</td></tr>
                     </table>
                 </div>
                 <div class="cmd-block">
@@ -1313,7 +1234,7 @@ pnputil /enum-devices /problem
 <span class="cmd-text">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{LogName=<span class="string">'Microsoft-Windows-Kernel-PnP/Configuration'</span>} <span class="flag">-MaxEvents</span> 100 | Export-Csv <span class="path">"C:\pnp-events.csv"</span> <span class="flag">-NoTypeInformation</span></pre>
                 </div>
                 <div class="cmd-block">
-                    <div class="cmd-label"><span class="badge badge-ps">PowerShell</span> Code 19 Fix — UpperFilters / LowerFilters</div>
+                    <div class="cmd-label"><span class="badge badge-ps">PowerShell</span> Code 19 Fix &mdash; UpperFilters / LowerFilters</div>
                     <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Check for stale filters in a device class (replace GUID)</span>
 <span class="cmd-text">Get-ItemProperty</span> <span class="path">"HKLM:\SYSTEM\CurrentControlSet\Control\Class\{CLASS-GUID}"</span> | Select-Object UpperFilters, LowerFilters
 
@@ -1356,7 +1277,7 @@ $val = $val | Where-Object { $_ <span class="flag">-ne</span> <span class="strin
 <span class="cmd-text">Get-WinEvent</span> <span class="flag">-FilterHashtable</span> @{LogName=<span class="string">'System'</span>; ProviderName=<span class="string">'Display'</span>} <span class="flag">-MaxEvents</span> 20 | Format-List</pre>
                 </div>
                 <div class="cmd-block">
-                    <div class="cmd-label"><span class="badge badge-ps">PowerShell</span> OS Migration Cleanup — Orphaned Drivers &amp; Filters</div>
+                    <div class="cmd-label"><span class="badge badge-ps">PowerShell</span> OS Migration Cleanup &mdash; Orphaned Drivers &amp; Filters</div>
                     <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># List ALL UpperFilters and LowerFilters across every device class</span>
 <span class="cmd-text">Get-ChildItem</span> <span class="path">"HKLM:\SYSTEM\CurrentControlSet\Control\Class"</span> | ForEach-Object {
     $props = <span class="cmd-text">Get-ItemProperty</span> $_.PSPath
@@ -1379,11 +1300,147 @@ pnputil /remove-device <span class="string">"HID\VID_1C4F&amp;PID_0084&amp;MI_01
             </div>
         </div>
 
+        <!-- 15 ARCHIVE & COMPRESSION -->
+        <div class="section" id="archives">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-icon">📦</span>
+                <h2>15 · ARCHIVE & COMPRESSION</h2>
+                <button class="toggle-btn">▼</button>
+            </div>
+            <div class="section-body">
+                <div class="cmd-block">
+                    <div class="cmd-label"><span class="badge badge-ps">PowerShell / CMD — Windows</span></div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment">:: Extract a .zip file (built into modern Windows)</span>
+tar <span class="flag">-xf</span> <span class="path">archive.zip</span>
+
+<span class="comment">:: Extract .zip to a specific folder</span>
+tar <span class="flag">-xf</span> <span class="path">archive.zip</span> <span class="flag">-C</span> <span class="path">C:\extracted</span>
+
+<span class="comment"># PowerShell — extract a zip</span>
+<span class="cmd-text">Expand-Archive</span> <span class="path">archive.zip</span> <span class="flag">-DestinationPath</span> <span class="path">C:\extracted</span>
+
+<span class="comment"># PowerShell — create a zip from a folder</span>
+<span class="cmd-text">Compress-Archive</span> <span class="flag">-Path</span> <span class="path">C:\MyFolder\*</span> <span class="flag">-DestinationPath</span> <span class="path">C:\backup.zip</span>
+
+<span class="comment"># PowerShell — add files to existing zip</span>
+<span class="cmd-text">Compress-Archive</span> <span class="flag">-Path</span> <span class="path">C:\newfile.txt</span> <span class="flag">-DestinationPath</span> <span class="path">C:\backup.zip</span> <span class="flag">-Update</span>
+
+<span class="comment">:: Extract .tar.gz with Windows tar</span>
+tar <span class="flag">-xzf</span> <span class="path">archive.tar.gz</span>
+
+<span class="comment">:: Extract .tar.bz2</span>
+tar <span class="flag">-xjf</span> <span class="path">archive.tar.bz2</span>
+
+<span class="comment">:: List contents of a tar/zip without extracting</span>
+tar <span class="flag">-tf</span> <span class="path">archive.tar.gz</span></pre>
+                </div>
+
+                <div class="cmd-block">
+                    <div class="cmd-label">Linux — zip / unzip</div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Install unzip if missing (Debian/Ubuntu/Proxmox)</span>
+sudo apt install unzip
+
+<span class="comment"># Install unzip on Fedora/CentOS</span>
+sudo dnf install unzip
+
+<span class="comment"># Extract a .zip file</span>
+unzip <span class="path">archive.zip</span>
+
+<span class="comment"># Extract to a specific directory</span>
+unzip <span class="path">archive.zip</span> <span class="flag">-d</span> <span class="path">/home/user/extracted/</span>
+
+<span class="comment"># List contents without extracting</span>
+unzip <span class="flag">-l</span> <span class="path">archive.zip</span>
+
+<span class="comment"># Test if archive is valid</span>
+unzip <span class="flag">-t</span> <span class="path">archive.zip</span>
+
+<span class="comment"># Overwrite existing files without prompting</span>
+unzip <span class="flag">-o</span> <span class="path">archive.zip</span>
+
+<span class="comment"># Create a zip file</span>
+zip <span class="flag">-r</span> <span class="path">backup.zip</span> <span class="path">/home/user/myfolder/</span></pre>
+                </div>
+
+                <div class="cmd-block">
+                    <div class="cmd-label">Linux — tar (tarballs)</div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Extract .tar (uncompressed)</span>
+tar <span class="flag">-xf</span> <span class="path">archive.tar</span>
+
+<span class="comment"># Extract .tar.gz or .tgz (gzip compressed)</span>
+tar <span class="flag">-xzf</span> <span class="path">archive.tar.gz</span>
+
+<span class="comment"># Extract .tar.bz2 (bzip2 compressed)</span>
+tar <span class="flag">-xjf</span> <span class="path">archive.tar.bz2</span>
+
+<span class="comment"># Extract .tar.xz (xz compressed)</span>
+tar <span class="flag">-xJf</span> <span class="path">archive.tar.xz</span>
+
+<span class="comment"># Extract to a specific directory</span>
+tar <span class="flag">-xf</span> <span class="path">archive.tar.gz</span> <span class="flag">-C</span> <span class="path">/home/user/extracted/</span>
+
+<span class="comment"># List contents without extracting</span>
+tar <span class="flag">-tf</span> <span class="path">archive.tar.gz</span>
+
+<span class="comment"># Verbose — see files as they extract</span>
+tar <span class="flag">-xvf</span> <span class="path">archive.tar.gz</span>
+
+<span class="comment"># Create a .tar.gz archive from a folder</span>
+tar <span class="flag">-czf</span> <span class="path">backup.tar.gz</span> <span class="path">/home/user/myfolder/</span>
+
+<span class="comment"># Create a .tar.bz2 archive (better compression, slower)</span>
+tar <span class="flag">-cjf</span> <span class="path">backup.tar.bz2</span> <span class="path">/home/user/myfolder/</span></pre>
+                </div>
+
+                <div class="cmd-block">
+                    <div class="cmd-label">Linux — 7z (7-Zip)</div>
+                    <pre><button class="copy-btn" onclick="copyCode(this)">copy</button><span class="comment"># Install 7zip (Debian/Ubuntu/Proxmox)</span>
+sudo apt install p7zip-full
+
+<span class="comment"># Install 7zip (Fedora/CentOS)</span>
+sudo dnf install p7zip p7zip-plugins
+
+<span class="comment"># Extract a .7z file</span>
+7z x <span class="path">archive.7z</span>
+
+<span class="comment"># Extract to a specific directory</span>
+7z x <span class="path">archive.7z</span> <span class="flag">-o</span><span class="path">/home/user/extracted/</span>
+
+<span class="comment"># List contents without extracting</span>
+7z l <span class="path">archive.7z</span>
+
+<span class="comment"># Create a .7z archive</span>
+7z a <span class="path">backup.7z</span> <span class="path">/home/user/myfolder/</span>
+
+<span class="comment"># 7z can also handle .zip, .tar.gz, .rar, .iso, etc.</span>
+7z x <span class="path">archive.zip</span>
+7z x <span class="path">archive.rar</span></pre>
+                </div>
+
+                <div class="cmd-block">
+                    <div class="cmd-label">Quick Reference — tar Flags</div>
+                    <table>
+                        <tr><th>Flag</th><th>What It Does</th></tr>
+                        <tr><td>-x</td><td>Extract files from archive</td></tr>
+                        <tr><td>-c</td><td>Create a new archive</td></tr>
+                        <tr><td>-f</td><td>Specify the archive filename</td></tr>
+                        <tr><td>-v</td><td>Verbose — show file names during operation</td></tr>
+                        <tr><td>-z</td><td>Filter through gzip (.tar.gz)</td></tr>
+                        <tr><td>-j</td><td>Filter through bzip2 (.tar.bz2)</td></tr>
+                        <tr><td>-J</td><td>Filter through xz (.tar.xz)</td></tr>
+                        <tr><td>-t</td><td>List contents without extracting</td></tr>
+                        <tr><td>-C</td><td>Extract to a specific directory</td></tr>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
     </main>
 </div>
 
 <footer>
-    <div>© 2025-2026 Sync-First Essentials LLC</div>
+    <div>&copy; 2025-2026 Sync-First Essentials LLC</div>
     <div>Remember Chaos is Peace, Peace is Chaos!</div>
 </footer>
 
@@ -1394,7 +1451,7 @@ pnputil /remove-device <span class="string">"HID\VID_1C4F&amp;PID_0084&amp;MI_01
         const btn = header.querySelector('.toggle-btn');
         const isHidden = body.style.display === 'none';
         body.style.display = isHidden ? 'block' : 'none';
-        btn.textContent = isHidden ? '▼' : '▶';
+        btn.textContent = isHidden ? '\u25BC' : '\u25B6';
     }
 
     // Copy button
@@ -1430,11 +1487,9 @@ pnputil /remove-device <span class="string">"HID\VID_1C4F&amp;PID_0084&amp;MI_01
         const query = this.value.toLowerCase().trim();
 
         if (!query) {
-            // Reset all
             document.querySelectorAll('.section').forEach(s => s.classList.remove('hidden'));
             document.querySelectorAll('.cmd-block').forEach(b => b.classList.remove('hidden'));
             searchCount.textContent = '';
-            // Remove highlights
             document.querySelectorAll('mark').forEach(m => {
                 m.replaceWith(m.textContent);
             });
@@ -1447,11 +1502,10 @@ pnputil /remove-device <span class="string">"HID\VID_1C4F&amp;PID_0084&amp;MI_01
             const sectionText = section.innerText.toLowerCase();
             if (sectionText.includes(query)) {
                 section.classList.remove('hidden');
-                // Make sure body is visible
                 const body = section.querySelector('.section-body');
                 if (body) body.style.display = 'block';
                 const btn = section.querySelector('.toggle-btn');
-                if (btn) btn.textContent = '▼';
+                if (btn) btn.textContent = '\u25BC';
                 matchCount++;
             } else {
                 section.classList.add('hidden');
@@ -1479,10 +1533,77 @@ pnputil /remove-device <span class="string">"HID\VID_1C4F&amp;PID_0084&amp;MI_01
             }
         });
     });
+
     // Site-wide nav toggle
     function toggleSiteNav() {
         document.getElementById('siteNav').classList.toggle('open');
         document.getElementById('siteNavOverlay').classList.toggle('open');
+    }
+</script>
+
+<!-- Cookie Consent Banner -->
+<div id="cookie-banner" style="
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #13161e;
+    border-top: 1px solid #00e5ff;
+    padding: 14px 24px;
+    z-index: 9999;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.82rem;
+    color: #c8d0e0;
+    text-align: center;
+    box-shadow: 0 -4px 20px rgba(0,229,255,0.1);
+">
+    This site uses cookies for analytics.
+    <button onclick="acceptCookies()" style="
+        background: #00e5ff;
+        color: #0d0f14;
+        border: none;
+        padding: 6px 16px;
+        margin-left: 12px;
+        border-radius: 4px;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.8rem;
+        cursor: pointer;
+        font-weight: 700;
+    ">Accept</button>
+    <button onclick="denyCookies()" style="
+        background: none;
+        color: #6b7590;
+        border: 1px solid #2a2f3d;
+        padding: 6px 16px;
+        margin-left: 8px;
+        border-radius: 4px;
+        font-family: 'Share Tech Mono', monospace;
+        font-size: 0.8rem;
+        cursor: pointer;
+    ">Decline</button>
+</div>
+
+<script>
+    if (!localStorage.getItem('cookie_consent')) {
+        document.getElementById('cookie-banner').style.display = 'block';
+    } else if (localStorage.getItem('cookie_consent') === 'accepted') {
+        gtag('consent', 'update', {
+            'analytics_storage': 'granted'
+        });
+    }
+
+    function acceptCookies() {
+        localStorage.setItem('cookie_consent', 'accepted');
+        gtag('consent', 'update', {
+            'analytics_storage': 'granted'
+        });
+        document.getElementById('cookie-banner').style.display = 'none';
+    }
+
+    function denyCookies() {
+        localStorage.setItem('cookie_consent', 'denied');
+        document.getElementById('cookie-banner').style.display = 'none';
     }
 </script>
 </body>
